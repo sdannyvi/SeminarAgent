@@ -9,7 +9,7 @@
 % NOTE: Slides 36–37 use schematic bar/line charts. Replace with exact numbers
 %       from "The Last Percent" (NeurIPS 2026 submission) once confirmed.
 
-\documentclass[aspectratio=169,10pt]{beamer}
+\documentclass[aspectratio=169,10pt,dvipsnames]{beamer}
 
 % ── Packages ────────────────────────────────────────────────────────────────
 \usepackage{tikz}
@@ -17,7 +17,7 @@
                 fit, decorations.pathreplacing, backgrounds, calc}
 \usepackage{amsmath, amssymb, amsthm}
 \usepackage{booktabs}
-\usepackage[dvipsnames]{xcolor}
+\usepackage{xcolor}
 \usepackage{hyperref}
 \usepackage{appendixnumberbeamer}
 \usepackage{array}
@@ -350,7 +350,7 @@ same graph, different node labels $\to$ same structure
 
 \medskip
 Standard NN: \alert{fails} (no permutation invariance)\\
-GNN: \textcolor{ForestGreen!70!black}{\textbf{operates on structure}} ✓
+GNN: \textcolor{ForestGreen!70!black}{\textbf{operates on structure}} $\checkmark$
 
 \medskip\textbf{Also:}
 \begin{itemize}\small
@@ -1528,8 +1528,8 @@ the qualitative structure of what information the model can form.}
 \begin{tikzpicture}[scale=0.85]
   % approximation bar chart
   \node[font=\small, bgucolor] at (2, 3.8) {Approximation ratio};
-  \foreach \i/\lbl/\ht in {1/OptGNN/2.8, 2/IR/2.8, 3/Logit/2.9, 4/{L+C}/3.0} {
-    \fill[bgucolor!60] ({0.5+(\i-1)*1.2}, 0) rectangle ({0.5+(\i-1)*1.2+0.9}, \ht);
+  \foreach \i/\lbl/\bh in {1/OptGNN/2.8, 2/IR/2.8, 3/Logit/2.9, 4/{L+C}/3.0} {
+    \fill[bgucolor!60] ({0.5+(\i-1)*1.2}, 0) rectangle ({0.5+(\i-1)*1.2+0.9}, \bh);
     \node[below, font=\tiny] at ({0.95+(\i-1)*1.2}, -0.05) {\lbl};
   }
   \draw[->, gray!70] (0,0) -- (5.2,0);
