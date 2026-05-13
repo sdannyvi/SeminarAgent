@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+
+# Output: compiled PDFs and auxiliary LaTeX files
+output/*.pdf
+output/*.aux
+output/*.log
+output/*.nav
+output/*.out
+output/*.snm
+output/*.toc
+output/*.vrb
+output/*_raw_response.txt
+
+# Keep the output directory itself
+!output/.gitkeep
+
+# macOS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+*.code-workspace
+
+# Jupyter
+.ipynb_checkpoints/
