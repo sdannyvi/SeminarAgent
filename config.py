@@ -23,7 +23,7 @@ MODELS: dict[str, str] = {
     "openai": "gpt-4o",
 }
 
-MAX_TOKENS: int = 8000
+MAX_TOKENS: int = 8192
 TEMPERATURE: float = 0.3  # Low for structured LaTeX output; raise for more creative outlines
 
 # ---------------------------------------------------------------------------
@@ -48,8 +48,14 @@ DEFAULT_PAPERS_DIR: Path = BASE_DIR / "GNNs" / "my papers"
 
 AUTHOR: str = "Dan Vilenchik"
 INSTITUTE: str = "Ben-Gurion University of the Negev"
-TALK_TITLE: str = "GNNs for Combinatorial Optimization"
-AUDIENCE: str = "CS/ECE faculty and graduate students"
+TALK_TITLE: str = "Learned Algorithms or Classical Messages in Disguise?"
+TALK_SUBTITLE: str = "GNNs for Combinatorial Optimization"
+TALK_EVENT: str = "ADYN Summer School 2026, TU Dortmund"
+AUDIENCE: str = (
+    "PhD students and postdocs in algorithms, combinatorics, probability, "
+    "graph theory, and theoretical computer science. Mathematically strong; "
+    "not necessarily familiar with ML or GNNs. Go slowly on ML basics."
+)
 
 # Target duration in minutes (used in prompt to calibrate slide count)
 TALK_DURATION_MINUTES: int = 50
@@ -63,7 +69,7 @@ BEAMER_COLOR_THEME: str = "default"
 BEAMER_FONT_THEME: str = "default"
 
 # Number of slides in main deck (agent uses this as a target)
-TARGET_SLIDE_COUNT: int = 40
+TARGET_SLIDE_COUNT: int = 41
 
 # Number of backup slides
-TARGET_BACKUP_COUNT: int = 6
+TARGET_BACKUP_COUNT: int = 7

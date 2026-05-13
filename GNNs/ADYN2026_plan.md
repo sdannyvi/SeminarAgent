@@ -3,7 +3,8 @@
 **Event:** Summerschool on Algorithms, Dynamics, and Information Flow in Networks, TU Dortmund
 **Speaker:** Dan Vilenchik, Ben-Gurion University of the Negev
 **Duration:** 50 minutes (~42–45 content + 5–8 questions)
-**Target deck:** ~43 main slides + 6 backup slides
+**Target deck:** ~41 main slides + 7 backup slides
+**Time budget:** Ch1 12–14 min · Ch2 13–15 min · Ch3 8–9 min · Ch4 8–9 min · Close/Q 5–8 min
 **Audience:** PhD students and postdocs in algorithms, combinatorics, probability, graph theory, TCS
 
 ---
@@ -421,8 +422,8 @@ there's an important caveat — next slide."
 audience.
 
 **Visual:** Simple two-box diagram. Left: "Where BP analysis works" (replica-symmetric phase,
-sparse random graphs near threshold). Right: "Where GNNs sometimes go further" (empirically
-work past clustering threshold in some settings).
+sparse random graphs near threshold). Right: "Where GNN behavior is not explained by classical
+BP analysis."
 
 **Slide text:**
 ```
@@ -432,10 +433,10 @@ Classical BP has known failure regimes:
 
 GNNs are not bound by those regimes in the same way:
   They optimize a task loss, not a probabilistic model
-  They may route information differently from any hand-designed BP
+  Their behavior in several cases is not explained by classical BP analysis
 
 Part of the open puzzle:
-  Why do GNNs sometimes work where BP would not?
+  Why do GNNs sometimes work where BP analysis does not predict success?
   The concept-learning framework is one lens into this — not the final answer.
 ```
 
@@ -1057,9 +1058,11 @@ Random 3-SAT:
 OptGNN (Yau et al., NeurIPS 2024): reaches ~99%.
 
 Exact solving (100%):
-  Håstad (2001): improving beyond 7/8 is NP-hard in the worst case.
-  For random SAT above threshold: the last 1% may require coordinated
-  changes across many variables simultaneously.
+  Worst-case hardness (Håstad, 2001): even small improvements over 7/8
+  are NP-hard in general — this motivates taking the gap seriously.
+  For random instances: the last 1% reflects a different barrier —
+  coordinated changes across many variables simultaneously.
+  (Worst-case inapproximability ≠ random-instance hardness, but both are real.)
 
 From ~99% to 100% is a qualitative transition, not a marginal gain.
 ```
@@ -1178,7 +1181,7 @@ OptGNN-Logit+Clause:   support strongly decodable   →  consistently solves
 
 The logit loss exposes TFF clauses — exactly the support clauses.
 (TFF = one literal preserving satisfaction; flipping it breaks the clause)
-Clause-level aggregation makes support globally computable.
+Clause-level aggregation makes support locally visible to the model.
 
 The presence of the confidence signal predicts the solving capability.
 ```
@@ -1373,11 +1376,14 @@ learning.
 ## Beamer generation command (after all blocking items resolved)
 
 ```bash
+# Recommended: multi-pass plan-based generation
 python agent.py \
-  --title "Learned Algorithms or Classical Messages in Disguise?" \
-  --papers "GNNs/my papers/" \
+  --from-plan GNNs/ADYN2026_plan.md \
   --output adyn2026 \
   --compile
+
+# First draft already generated at: output/adyn2026.tex
+# Compile locally: pdflatex -interaction=nonstopmode output/adyn2026.tex
 ```
 
 Settings to confirm in `config.py`:

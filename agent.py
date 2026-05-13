@@ -1,21 +1,25 @@
 """
 agent.py — SeminarAgent main entry point.
 
-Reads research context and source papers, calls an LLM to generate a complete
-LaTeX Beamer slide deck, and writes the output to disk. Optionally compiles to PDF.
+Two generation modes:
 
-Belongs to: SeminarAgent / core agent.
-Update when: adding new LLM providers, changing the generation pipeline, or
-adding new input modes (e.g., outline-then-generate).
+1. --from-plan PATH  (recommended)
+   Reads a pre-approved slide plan (ADYN2026_plan.md or similar) and generates
+   Beamer LaTeX in multiple passes — one per chapter. Faithful to the plan.
+
+2. Default mode
+   Reads RESEARCH_CONTEXT.md + source PDFs and generates slides from scratch.
+   Use for new talks before a plan has been approved.
 
 Usage:
+    python agent.py --from-plan GNNs/ADYN2026_plan.md --output adyn2026 --compile
     python agent.py --title "My Talk" --papers GNNs/my\ papers/
-    python agent.py --outline-only   # generate a slide outline, no LaTeX yet
-    python agent.py --compile        # also run pdflatex after generation
+    python agent.py --outline-only
 """
 
 import argparse
 import logging
+import re
 import sys
 from pathlib import Path
 
@@ -24,7 +28,13 @@ import openai
 
 import config
 from latex_utils import compile_tex, extract_pdf_text, extract_tex_from_response
-from prompts import SYSTEM_PROMPT, build_user_prompt
+from prompts import (
+    PLAN_SYSTEM_PROMPT,
+    SYSTEM_PROMPT,
+    build_plan_preamble_prompt,
+    build_plan_section_prompt,
+    build_user_prompt,
+)
 
 logging.basicConfig(
     level=logging.INFO,
@@ -150,6 +160,141 @@ def collect_paper_summaries(paper_paths: list[Path]) -> list[str]:
         except Exception as exc:
             logger.warning("Failed to extract text from %s: %s", p.name, exc)
     return summaries
+
+
+# ---------------------------------------------------------------------------
+# Plan-based multi-pass generation
+# ---------------------------------------------------------------------------
+
+# Section headers used to split the plan into passes.
+_PLAN_SECTION_MARKERS = [
+    ("Opening + Chapter 1", "### Opening + Chapter 1"),
+    ("Chapter 2", "### Chapter 2"),
+    ("Chapter 3", "### Chapter 3"),
+    ("Chapter 4", "### Chapter 4"),
+    ("Backup Slides", "### Backup Slides"),
+]
+
+
+def _split_plan_into_sections(plan_text: str) -> dict[str, str]:
+    """Split the plan markdown into sections keyed by section name.
+
+    Uses the section markers defined in _PLAN_SECTION_MARKERS.
+
+    Args:
+        plan_text: Full contents of the plan .md file.
+
+    Returns:
+        Dict mapping section name → section text.
+    """
+    sections: dict[str, str] = {}
+    for i, (name, marker) in enumerate(_PLAN_SECTION_MARKERS):
+        start = plan_text.find(marker)
+        if start == -1:
+            logger.warning("Section marker not found in plan: %r", marker)
+            continue
+        next_markers = [
+            plan_text.find(m)
+            for _, m in _PLAN_SECTION_MARKERS[i + 1 :]
+            if plan_text.find(m) != -1
+        ]
+        # Also stop at the "Missing Inputs" or "Beamer generation" sections.
+        stop_markers = ["## Missing Inputs", "## Beamer generation"]
+        for s in stop_markers:
+            pos = plan_text.find(s)
+            if pos != -1:
+                next_markers.append(pos)
+
+        end = min(next_markers) if next_markers else len(plan_text)
+        sections[name] = plan_text[start:end].strip()
+
+    return sections
+
+
+def run_from_plan(plan_path: Path, output_name: str, compile_pdf: bool) -> None:
+    """Generate a Beamer deck from a pre-approved slide plan using multi-pass LLM calls.
+
+    Splits the plan into sections (Chapter 1–4 + backup), generates LaTeX frames per
+    section, assembles them with a separately generated preamble, and writes the
+    final .tex to output/.
+
+    Args:
+        plan_path: Path to the approved plan .md file (e.g., GNNs/ADYN2026_plan.md).
+        output_name: Base name for output files (without extension).
+        compile_pdf: If True, compile the assembled .tex with pdflatex.
+    """
+    config.OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    plan_text = plan_path.read_text(encoding="utf-8")
+    sections = _split_plan_into_sections(plan_text)
+
+    if not sections:
+        raise ValueError(f"Could not parse any sections from plan: {plan_path}")
+
+    logger.info("Plan sections found: %s", list(sections.keys()))
+
+    parts: list[str] = []
+
+    # --- Pass 0: preamble ---
+    subtitle = getattr(config, "TALK_SUBTITLE", "")
+    event = getattr(config, "TALK_EVENT", "")
+    preamble_prompt = build_plan_preamble_prompt(
+        title=config.TALK_TITLE,
+        subtitle=subtitle,
+        author=config.AUTHOR,
+        institute=config.INSTITUTE,
+        event=event,
+        theme=config.BEAMER_THEME,
+        color_theme=config.BEAMER_COLOR_THEME,
+    )
+    logger.info("Pass 0: generating preamble")
+    preamble_raw = call_llm(PLAN_SYSTEM_PROMPT, preamble_prompt)
+    preamble = extract_tex_from_response(preamble_raw)
+    parts.append(preamble)
+
+    # --- Passes 1–N: one per section ---
+    section_names = list(sections.keys())
+    context_so_far = "Preamble and title frame generated."
+
+    for i, name in enumerate(section_names):
+        is_backup = name == "Backup Slides"
+        is_last = i == len(section_names) - 1
+
+        logger.info("Pass %d: generating %s", i + 1, name)
+        section_prompt = build_plan_section_prompt(
+            section_title=name,
+            section_plan=sections[name],
+            previous_context=context_so_far,
+            is_backup=is_backup,
+            close_document=is_last,
+        )
+        raw = call_llm(PLAN_SYSTEM_PROMPT, section_prompt)
+        tex = extract_tex_from_response(raw)
+        parts.append(tex)
+
+        # Update context summary for the next pass.
+        slide_count = tex.count(r"\begin{frame}")
+        context_so_far = (
+            f"Generated through {name} ({slide_count} frames). "
+            f"Running question introduced on Slide 3; callbacks at chapter ends. "
+            f"Last section: {name}."
+        )
+
+    # --- Assemble ---
+    assembled = "\n\n% " + "=" * 70 + "\n\n".join(parts)
+    tex_path = config.OUTPUT_DIR / f"{output_name}.tex"
+    tex_path.write_text(assembled, encoding="utf-8")
+    logger.info("Assembled .tex written to %s (%d chars)", tex_path, len(assembled))
+
+    if compile_pdf:
+        try:
+            pdf_path = compile_tex(tex_path)
+            logger.info("PDF compiled: %s", pdf_path)
+        except RuntimeError as exc:
+            logger.error("Compilation failed: %s", exc)
+            logger.info(
+                "Fix the .tex and recompile: pdflatex -output-directory output/ %s",
+                tex_path,
+            )
 
 
 # ---------------------------------------------------------------------------
@@ -304,13 +449,20 @@ def run(
 def parse_args() -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        description="SeminarAgent: generate LaTeX Beamer slides from research papers.",
+        description="SeminarAgent: generate LaTeX Beamer slides from a plan or research papers.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+    parser.add_argument(
+        "--from-plan",
+        metavar="PATH",
+        default=None,
+        help="Path to a pre-approved slide plan .md file. "
+             "Uses multi-pass generation; recommended for approved talks.",
     )
     parser.add_argument(
         "--title",
         default=config.TALK_TITLE,
-        help="Talk title (overrides config.TALK_TITLE)",
+        help="Talk title (overrides config.TALK_TITLE). Ignored when --from-plan is set.",
     )
     parser.add_argument(
         "--papers",
@@ -318,13 +470,13 @@ def parse_args() -> argparse.Namespace:
         default=[],
         metavar="PATH",
         help="PDF files or directories to use as source material. "
-             "If a directory is given, all PDFs inside are used.",
+             "Ignored when --from-plan is set.",
     )
     parser.add_argument(
         "--output",
         default=None,
         metavar="NAME",
-        help="Base name for output files (default: derived from title)",
+        help="Base name for output files (default: derived from title or plan filename)",
     )
     parser.add_argument(
         "--outline-only",
@@ -389,20 +541,32 @@ if __name__ == "__main__":
     args = parse_args()
     config.PROVIDER = args.provider
 
-    paper_paths = resolve_paper_paths(args.papers)
-    if not paper_paths and not args.outline_only:
-        logger.info(
-            "No papers specified. Using default papers dir: %s",
-            config.DEFAULT_PAPERS_DIR,
+    if args.from_plan:
+        plan_path = Path(args.from_plan)
+        if not plan_path.exists():
+            logger.error("Plan file not found: %s", plan_path)
+            sys.exit(1)
+        output_name = args.output or plan_path.stem.lower().replace(" ", "-")
+        run_from_plan(
+            plan_path=plan_path,
+            output_name=output_name,
+            compile_pdf=args.compile,
         )
-        paper_paths = resolve_paper_paths([str(config.DEFAULT_PAPERS_DIR)])
+    else:
+        paper_paths = resolve_paper_paths(args.papers)
+        if not paper_paths and not args.outline_only:
+            logger.info(
+                "No papers specified. Using default papers dir: %s",
+                config.DEFAULT_PAPERS_DIR,
+            )
+            paper_paths = resolve_paper_paths([str(config.DEFAULT_PAPERS_DIR)])
 
-    output_name = args.output or title_to_filename(args.title)
+        output_name = args.output or title_to_filename(args.title)
 
-    run(
-        talk_title=args.title,
-        paper_paths=paper_paths,
-        output_name=output_name,
-        outline_only=args.outline_only,
-        compile_pdf=args.compile,
-    )
+        run(
+            talk_title=args.title,
+            paper_paths=paper_paths,
+            output_name=output_name,
+            outline_only=args.outline_only,
+            compile_pdf=args.compile,
+        )
