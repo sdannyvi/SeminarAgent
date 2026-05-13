@@ -1,18 +1,29 @@
-# ADYN Summer School 2026 — Talk Plan
+# ADYN Summer School 2026 — Talk Plan (Revised)
 
 **Event:** Summerschool on Algorithms, Dynamics, and Information Flow in Networks, TU Dortmund
 **Speaker:** Dan Vilenchik, Ben-Gurion University of the Negev
 **Duration:** 50 minutes (~42–45 content + 5–8 questions)
-**Target deck:** ~40 main slides + 6 backup slides
+**Target deck:** ~46 main slides + 6 backup slides
 **Audience:** PhD students and postdocs in algorithms, combinatorics, probability, graph theory, TCS
 
 ---
 
-## One critical terminology note
+## Revision notes (v2)
 
-The prompt uses the term **"LDR"** — that term does not appear in your papers. The correct term is
-**LPR (Least-Probable Removal)** from the AAAI 2026 clique paper. All slides below use LPR.
-Clarify if LDR was intended to refer to something else.
+Five changes from v1:
+
+1. **Running question** added on Slide 3 and revisited at the end of each chapter.
+2. **NeuroSAT opening** de-overclaimed: "appeared to learn SAT-solving behavior," not "learned to solve SAT." Added: "We still do not fully understand why this generalization happens."
+3. **BP → GNN analogy** qualified: GNNs are BP-inspired, not literally BP. Classical BP has known regime failures; the puzzle is partly why GNNs sometimes go beyond what simple BP predicts.
+4. **Chapter 1 expanded** to ~18 slides with a supervised-learning toy example, an explicit loss-function slide, a clearer train/test cartoon, and a slide separating architecture / parameters / training objective / decoding.
+5. **Formal/empirical/analogy table** added as a new slide before Chapter 4's unified summary.
+
+---
+
+## Terminology note
+
+The prompt draft used the term **"LDR"** — that term does not appear in the papers. The correct
+term is **LPR (Least-Probable Removal)** from the AAAI 2026 clique paper. All slides use LPR.
 
 ---
 
@@ -40,7 +51,7 @@ problems: trained on small instances, they sometimes generalize to much larger o
 impression that they may have discovered new algorithmic principles. In this talk I examine what
 these networks actually learn. Using a concept-learning framework — asking whether meaningful
 algorithmic quantities are decodable from learned embeddings — I present results across four
-problems. In SAT and graph coloring, GNNs trained with only binary supervision develop internal
+settings. In SAT and graph coloring, GNNs trained with only binary supervision develop internal
 representations tightly aligned with the classical notion of *support*, a confidence-like signal central
 to local-search and survey-propagation heuristics. In Max-Clique, the dominant learned concept is
 degree-based ranking, which motivates a new decoder (LPR — Least-Probable Removal) that
@@ -60,31 +71,51 @@ concepts, pointing toward a principled, concept-level theory of learned combinat
 | `GNNs/my papers/Neuro_sat.pdf` | Shoham, Cohen, Wattad, Rika, Vilenchik. "Concept learning for algorithmic reasoning: Insights from SAT-solving GNNs." *Information Sciences* 726 (2026). | Chapter 2 main paper |
 | `GNNs/my papers/graph_coloring.pdf` | Shoham, Rika, Vilenchik. "From Black Box to Algorithmic Insight: XAI in GNNs for Graph Coloring." AAAI 2025. | Chapter 2 second paper |
 | `GNNs/my papers/20251-AAAI26.ShohamE-ML.pdf` | Shoham, Haber, Rika, Vilenchik. "Learning to Rank: How GNNs Solve Max-Clique and Sparse PCA." AAAI 2026. | Chapter 3 main paper |
-| `GNNs/my papers/OptGNN_elad_s (1).pdf` | Anonymous. "The Last Percent: Concept Emergence and the Jump from Approximation to Solving in Neural CSPs." NeurIPS 2026 (submitted). | Chapter 4 main paper [VERIFY attribution before presenting publicly] |
+| `GNNs/my papers/OptGNN_elad_s (1).pdf` | Anonymous. "The Last Percent: Concept Emergence and the Jump from Approximation to Solving in Neural CSPs." NeurIPS 2026 (submitted). | Chapter 4 main paper — **[VERIFY attribution before presenting publicly]** |
 | `GNNs/background/2310.00526v7.pdf` | Yau, Karalias, Xu, Lu, Jegelka. "Are Graph Neural Networks Optimal Approximation Algorithms?" NeurIPS 2024. | Background for Chapter 4 |
 | `GNNs/background/21-0449.pdf` | Cappart et al. "Combinatorial Optimization and Reasoning with Graph Neural Networks." *JMLR* 2023. | Background / Chapter 1 related work |
 
 **Missing:** Original NeuroSAT paper (Selsam et al., ICLR 2019) — not in the folder. Training range
-n ∈ [10, 40] is confirmed from Dan's concept learning paper (Table 1 cites this). Test range up to
-n = 2000 verified from the same paper. [VERIFY exact Selsam claims independently before citing.]
+n ∈ [10, 40] is confirmed from the concept learning paper (Table 1). Test range up to n = 2000
+verified from the same paper. **[VERIFY exact Selsam numbers independently before citing.]**
 
 ---
 
-## Forty-Slide Outline
+## The Running Question
+
+The talk is organized around one question, introduced on Slide 3 and revisited at the close of each
+chapter:
+
+> **When a GNN appears to solve a hard combinatorial problem — what did it actually learn?**
+
+Each chapter gives a partial answer for one problem class:
+
+| Chapter | Setting | Answer |
+|---------|---------|--------|
+| 1 | GNNs in general | Maybe it learned a transferable message-passing rule. But what rule? |
+| 2 | SAT and Coloring | It learned support — a classical confidence-like signal from solver theory. |
+| 3 | Max-Clique / Sparse PCA | It learned degree-based ranking — a classical planted-graph heuristic. |
+| 4 | SDP / OptGNN | Whether it learns a confidence concept determines whether it approximates or solves. |
+
+The final takeaway slide gives the unified answer.
+
+---
+
+## Forty-Six-Slide Outline
 
 ---
 
 ### Opening + Chapter 1 — Crash Course: ML, GNNs, and the Promise
-*(~14 slides)*
+*(~18 slides)*
 
 ---
 
 #### Slide 1 — Title slide
 
-**Purpose:** Establish the talk. Give the audience a moment to settle.
+**Purpose:** Establish the talk.
 
-**Visual:** Title, name, affiliation, event, date. Optionally a small contrast image: tiny formula
-(n = 20) on the left, giant formula (n = 2000) on the right.
+**Visual:** Title, name, affiliation, event, date. Below the title, in smaller text: the running
+question as a teaser.
 
 **Slide text:**
 ```
@@ -94,40 +125,78 @@ GNNs for Combinatorial Optimization
 Dan Vilenchik
 Ben-Gurion University of the Negev
 ADYN Summer School 2026
+
+─────────────────────────────────────
+Running question:
+When a GNN appears to solve a hard combinatorial problem —
+what did it actually learn?
 ```
 
-**Speaker note:** Introduce yourself briefly. The title is a question — tell the audience the talk will
-answer it. It took several papers to answer it, and the answer is interesting.
+**Speaker note:** "The title is a question, and there's a smaller question underneath it. I'll carry
+both through the entire talk. By the end we'll have an answer — not a complete one, but a
+useful one. Let me start with a puzzle."
 
 ---
 
-#### Slide 2 — A neural network learned to solve SAT. On instances 100× larger than it ever saw.
+#### Slide 2 — NeuroSAT appeared to learn SAT-solving behavior from tiny instances
 
-**Purpose:** The hook. Make the audience feel why this is surprising.
+**Purpose:** The hook. Establish the empirical puzzle without overclaiming.
 
 **Visual:** Two boxes side by side.
-- Left: "Training — random 3-SAT, n ∈ [10, 40] variables. Solvable with a laptop. Label: SAT/UNSAT."
-- Right: "Test — random 3-SAT, n up to 2000 variables. Much harder. Same GNN."
-- Bridge arrow: "Generalization? What did it learn?"
+- Left: "Training — random 3-SAT, n ∈ [10, 40] variables. Label: SAT / UNSAT only."
+- Right: "Test — random 3-SAT, n up to [VERIFY from Selsam paper] variables. Same GNN, no retraining."
+- Bridge arrow underneath: "It still works — sometimes. Why?"
 
 **Slide text:**
 ```
 NeuroSAT (Selsam et al., 2019):
-  Train: n ∈ [10, 40] variables
-  Test:  n up to 2000 variables
-  Result: it still works — sometimes
+  Train:  n ∈ [10, 40] variables   (exact solver provides labels)
+  Test:   much larger instances
+  Label:  SAT / UNSAT only — single bit of supervision
 
-Not just interpolation.
-The training search space and test search space are incomparable in size.
+Observation:
+  The same GNN generalized surprisingly far beyond its training range.
+
+Caveat:
+  We still do not fully understand why this generalization happens.
+  That is the puzzle.
 ```
 
-**Speaker note:** "You're a theorist. You know that the search space grows exponentially. Instances
-of size 40 and instances of size 2000 are in entirely different regimes. So how can training on the
-small ones help on the large ones? That question is what drives our work."
+**Speaker note:** "I want to be precise here. NeuroSAT did not solve SAT in an algorithmic
+sense. It was not designed to be a general-purpose SAT solver, and its authors did not claim
+that. What it did — surprisingly — is generalize to much larger instances than it was trained on,
+with only a binary SAT/UNSAT label as supervision. That train-small/test-large behavior created
+a serious interpretability puzzle. We don't fully understand it yet. What we did is start
+asking: what is encoded in the model's internal representations? That question, it turns out,
+has an answer."
 
 ---
 
-#### Slide 3 — The setting: combinatorial optimization on graphs
+#### Slide 3 — The running question
+
+**Purpose:** State the organizing question of the talk explicitly before the ML background.
+
+**Visual:** Large centered question. Below it: four chapter headings with blank answer slots to
+be filled as the talk proceeds.
+
+**Slide text:**
+```
+When a GNN appears to solve a hard combinatorial problem —
+what did it actually learn?
+
+Chapter 1: We introduce GNNs and the puzzle.
+Chapter 2: [SAT and Coloring — answer revealed]
+Chapter 3: [Clique and Sparse PCA — answer revealed]
+Chapter 4: [SDP / OptGNN — answer revealed]
+```
+
+**Speaker note:** "I'll come back to this slide at the end of each chapter. Think of it as a
+running scoreboard. Each chapter gives us a partial answer for one setting. The final slide will
+close the loop."
+
+---
+
+#### Slide 4 — The problem setting: combinatorial optimization on graphs
 
 **Purpose:** Define the problem class cleanly for a theory audience.
 
@@ -140,93 +209,182 @@ Input:    a graph or formula
 Goal:     find an assignment satisfying all (or most) constraints
 Hard:     NP-complete in the worst case
 
-Examples:
+Examples in this talk:
   3-SAT:     assign TRUE/FALSE to variables
-  Coloring:  assign colors to vertices, no adjacent pair same color
+  Coloring:  assign colors to vertices, no two adjacent the same
   Clique:    find a large complete subgraph
 ```
 
-**Speaker note:** "These are canonical NP-hard problems. I'll use all three as test cases. The
-message-passing structure that makes GNNs natural here is the same structure that makes belief
-propagation natural — that connection is the key to understanding what happens."
+**Speaker note:** "These are canonical NP-hard problems and they will serve as test cases
+throughout the talk. Each one has a slightly different structure, and that structural difference
+will matter when we ask what concept the GNN learned."
 
 ---
 
-#### Slide 4 — Machine learning in one slide
+#### Slide 5 — Supervised learning: the basic setup
 
-**Purpose:** Define the ML setup for a non-ML audience. Precise and fast.
+**Purpose:** Define the ML setup for a non-ML audience, grounded with a toy example.
 
-**Visual:** Clean 4-row table or left-to-right pipeline.
+**Visual:** A three-row pipeline with a tiny toy example running alongside each step.
+- Row 1: Training data: "(formula, SAT?) pairs." Toy: 5 formulas with YES/NO labels.
+- Row 2: Model: "a function f_θ that maps formula → prediction." Toy: a black box with a dial θ.
+- Row 3: Training: "adjust θ so predictions match labels." Toy: arrow showing the dial turning.
 
 **Slide text:**
 ```
-Training data:    solved examples — (instance, label) pairs
-Model:            a parameterized function f_θ
-Loss:             how wrong is f_θ(instance) relative to label?
-Training:         adjust θ to reduce loss across examples
-Test:             evaluate f_θ on new, unseen instances
+Training data:    (instance, label) pairs — solved examples
+Model:            f_θ: instance → prediction   (θ = learned parameters)
+Loss:             how wrong is f_θ(instance) compared to the label?
+Training:         adjust θ to reduce total loss over training data
+Test:             freeze θ, evaluate f_θ on new unseen instances
+
+Toy example:
+  Instance: a small SAT formula
+  Label:    SAT or UNSAT (from an exact solver)
+  Task:     learn to predict without running the exact solver
 ```
 
-**Speaker note:** "I'll define everything as I use it. The key thing for today: the model is trained
-on one collection of instances and tested on another. Whether it succeeds on unseen instances —
-that's called generalization, and for this talk it's the central issue."
+**Speaker note:** "If you've never seen this setup: you give the model many solved examples.
+It adjusts its parameters to match the labels. When done training, you freeze everything and
+evaluate on new instances it has never seen. Whether it works on new instances is generalization.
+That's the central question."
 
 ---
 
-#### Slide 5 — Generalization: why training small and testing large is the puzzle
+#### Slide 6 — The loss function: what it measures and why it matters
 
-**Purpose:** Establish the conceptual heart of the talk.
+**Purpose:** Make the role of the loss explicit. This audience will want to know what exactly
+is being optimized.
 
-**Visual:** Number line of instance sizes. Training range [10, 40] highlighted at one end. Test range
-[500, 2000] highlighted far right. A "?" bridge spanning the gap.
+**Visual:** A number line from 0 to ∞ labeled "Loss." Left end: "prediction matches label
+perfectly." Right end: "prediction is completely wrong." Arrow pointing left: "training pushes
+here." Beneath: the specific NeuroSAT loss written out.
 
 **Slide text:**
 ```
-If a model generalizes across sizes:
-  → it learned something structural, not instance-specific
-  → the "something" is our object of study
+The loss function encodes what we want.
 
-What rule could possibly transfer from n = 40 to n = 2000?
+For NeuroSAT:
+  Loss = cross-entropy between predicted P(SAT) and true label ∈ {0,1}
+  → model learns to push P(SAT) near 1 for satisfiable instances
+  → and near 0 for unsatisfiable ones
+
+Why this matters:
+  The loss says nothing about which variables are TRUE or FALSE.
+  It says nothing about support, degree, or any other solver quantity.
+  If those concepts appear in the embeddings, they emerged spontaneously.
 ```
 
-**Speaker note:** "When a model generalizes across instances from the same distribution but same
-size, that's ordinary generalization. When it generalizes to a completely different size regime —
-orders of magnitude larger — that's remarkable. It suggests the model latched onto some invariant
-of the problem structure, not just the training set."
+**Speaker note:** "The loss is the only task signal the model receives. NeuroSAT's loss is a single
+bit per instance: SAT or UNSAT. Everything else the model does — how it organizes its internal
+representations, what concepts it encodes — is not prescribed by the loss. That is the puzzle.
+The model learns far more structure than the loss requires."
 
 ---
 
-#### Slide 6 — Graph-structured problems need graph-structured models
+#### Slide 7 — Train, test, and generalization: the central issue
+
+**Purpose:** Establish train/test and why size-generalization is non-trivial.
+
+**Visual:** A cartoon in two panels.
+- Panel 1 (Train): a small pool of SAT instances, n ∈ [10, 40]. Model trained here.
+- Panel 2 (Test): a much larger pool of instances, n up to [VERIFY]. Same frozen model applied.
+- Underneath: "If test performance is strong, the model learned something structural — not
+  instance-specific."
+
+**Slide text:**
+```
+Training set:     instances from distribution D_train
+Test set:         instances from distribution D_test (same problem, possibly different size)
+
+Ordinary generalization: D_train and D_test are similar
+Size generalization:     D_test instances are much larger than D_train
+
+For NeuroSAT:
+  D_train: n ∈ [10, 40]
+  D_test:  much larger [VERIFY range from Selsam paper]
+
+If the model generalizes across sizes:
+  → it learned something that doesn't depend on n
+  → what is that something?
+```
+
+**Speaker note:** "Ordinary generalization — same distribution, held-out examples — is the
+usual story. What's unusual here is cross-size generalization. A model trained on tiny instances
+working on large ones suggests the model found an invariant of the problem structure that scales.
+That invariant is what we're hunting."
+
+---
+
+#### Slide 8 — Four things to keep separate
+
+**Purpose:** Give the audience a precise vocabulary before introducing GNNs. This prevents
+confusion between what was designed and what was learned.
+
+**Visual:** A clean 2x2 or 4-row table.
+
+**Slide text:**
+```
+1. Architecture:
+   The structure of the model — how information flows.
+   (For a GNN: nodes, edges, message-passing rounds)
+   Designed by the researcher.
+
+2. Parameters (weights):
+   The numerical values inside the model.
+   Learned from data during training.
+
+3. Training objective (loss):
+   What the model is rewarded for predicting correctly.
+   Designed by the researcher.
+
+4. Decoding strategy:
+   How the model's output scores are turned into a discrete solution.
+   Designed by the researcher; can be improved post-training.
+
+When we say "the model learned X", we mean X is in the parameters —
+not designed, not prescribed by the loss, but emergent.
+```
+
+**Speaker note:** "This distinction will matter a lot when I describe our results. When I say
+'the GNN learned support,' I mean support is decodable from the learned parameters — from the
+model's internal representations — even though the loss never mentioned support. The concept
+emerged. That's the interesting part."
+
+---
+
+#### Slide 9 — Graph-structured problems need graph-structured models
 
 **Purpose:** Motivate GNNs specifically.
 
 **Visual:** Left: adjacency matrix of a graph under two different node labelings. Right: both
-represent the same graph structurally. Label: "Any useful model must be permutation-invariant."
+represent the same graph. Label: "Any useful model must be permutation-invariant."
 
 **Slide text:**
 ```
 Challenge: same graph, different node labels → same combinatorial structure
-Standard NN: fails (sees different inputs)
-GNN: ignores labels, operates on structure ✓
+Standard NN: fails (different inputs, no invariance)
+GNN: operates on structure, ignores labels ✓
 
 Also:
-  Graphs are variable-size
-  Constraints are local
-  → local message-passing is a natural inductive bias
+  Graphs are variable-size     → can't use fixed-size inputs
+  Constraints are local        → local message passing is a natural inductive bias
+  Sparsity is common           → GNNs scale linearly with edges
 ```
 
 **Speaker note:** "Combinatorial problems on graphs are permutation-invariant: relabeling nodes
-doesn't change the answer. Standard neural networks can't handle this, but GNNs are built for it.
-They also scale with the number of edges, not the total number of possible graphs."
+doesn't change the answer. Standard neural networks can't handle this — they see different
+inputs. GNNs are built for it. They also scale with the number of edges, not the total number of
+possible graphs. This makes them practically usable on large instances."
 
 ---
 
-#### Slide 7 — What is a GNN?
+#### Slide 10 — What is a GNN?
 
-**Purpose:** Give a clean definition that a theorist can hold.
+**Purpose:** Give a clean formal definition that a theorist can hold.
 
-**Visual:** A small graph. Each node labeled with a vector h_v. An arrow from each neighbor to a
-central node. The two-step update rule written out.
+**Visual:** A small graph (6 nodes). Each node labeled with an embedding vector h_v ∈ ℝ^d.
+An arrow from each neighbor to a central node, labeled "message." Two-step update rule written out.
 
 **Slide text:**
 ```
@@ -236,120 +394,133 @@ Each round t:
   1. Aggregate:   m_v = AGG({h_u : u ∈ N(v)})
   2. Update:      h_v ← UPDATE(h_v, m_v)
 
-After T rounds: predict from {h_v}
+After T rounds: predict from embeddings {h_v}
 
-Both AGG and UPDATE are learned neural networks.
+Both AGG and UPDATE are learned neural networks (the parameters).
+After T rounds, each v has "seen" its T-hop neighborhood.
 ```
 
 **Speaker note:** "Think of it as a distributed algorithm. Each node has a memory vector. Each
-round, it collects messages from its neighbors, aggregates them, and updates its own state.
-After T rounds, you read off a prediction from the final states. The only difference from a designed
-algorithm is that the aggregation and update functions are learned from data."
+round it collects messages from neighbors, aggregates them, and updates its state. After T rounds,
+it has a summary of a T-hop ball. The only difference from a designed algorithm is that
+AGG and UPDATE are learned from data. What they learn is our question."
 
 ---
 
-#### Slide 8 — Running toy example: initial state
+#### Slide 11 — Running toy example: initial state
 
-**Purpose:** Anchor the abstract definition with a concrete small example.
+**Purpose:** Anchor the abstract definition with a concrete example.
 
-**Visual:** A specific small graph: 6 vertices (3 forming a triangle), labeled A–F. Each vertex gets
-an initial random embedding shown as a small colored bar.
+**Visual:** A specific small graph: 6 vertices (three forming a triangle), labeled A–F. Each vertex
+gets an initial random embedding shown as a small colored bar.
 
 **Slide text:**
 ```
 Graph:       6 vertices, 7 edges
 Embeddings:  randomly initialized ∈ ℝ^d
-Round 0:     no information has been shared yet
+Round 0:     no information has been shared
+             every vertex looks identical to the model
 ```
 
-**Speaker note:** "I'll carry this example through the next two slides. All nodes start with random
-embeddings — the network hasn't done anything yet. All vertices look the same to the model."
+**Speaker note:** "I'll run this example for three slides. We start from random embeddings.
+All nodes are indistinguishable to the model at this point."
 
 ---
 
-#### Slide 9 — Running toy example: one round of message passing
+#### Slide 12 — Running toy example: one round of message passing
 
 **Purpose:** Show the mechanics of one step.
 
-**Visual:** Same graph. Arrows from neighbors of vertex A flowing in. Aggregate operation shown.
-New embedding for A. Other vertices also updated in parallel.
+**Visual:** Same graph. Arrows flowing from neighbors of vertex A toward A. Aggregate operation
+shown. Updated embedding for A highlighted.
 
 **Slide text:**
 ```
 Round 1:
   A receives messages from B, C, D
-  AGG(h_B, h_C, h_D) → m_A
+  m_A = AGG(h_B, h_C, h_D)
   h_A ← UPDATE(h_A, m_A)
-  ↳ A now "knows about" its 1-hop neighborhood
 
-After T rounds: each vertex knows about its T-hop neighborhood
+After round 1: A knows about its 1-hop neighborhood
+After round 2: A knows about its 2-hop neighborhood
+After T rounds: A has a summary of a T-hop ball
+
+The embedding h_A is now a function of local graph structure.
 ```
 
-**Speaker note:** "After one round, each node has seen its immediate neighbors. After two rounds,
-its 2-hop neighborhood. After T rounds, a summary of a T-hop ball. For sparse graphs this grows
-slowly. For dense graphs a few rounds cover a lot of the graph."
+**Speaker note:** "One round of message passing gives each node a view of its immediate
+neighbors. The T-round embedding is a function of the T-hop neighborhood. For problems where
+the relevant combinatorial structure is local, this is enough."
 
 ---
 
-#### Slide 10 — Running toy example: readout
+#### Slide 13 — Running toy example: readout and decoding
 
-**Purpose:** Complete the pipeline.
+**Purpose:** Complete the pipeline and introduce the decoding step.
 
-**Visual:** Final embeddings for all vertices after T rounds. MLP output per vertex giving a score
-s_v ∈ [0, 1]. Thresholding to a prediction (clique member / not).
+**Visual:** Final embeddings after T rounds. MLP output per vertex giving scores s_v ∈ [0, 1].
+Arrow to a discrete solution (colored vertices / TRUE/FALSE labels).
 
 **Slide text:**
 ```
 After T rounds:
-  For each vertex v: MLP(h_v) → score s_v ∈ [0, 1]
-  
+  MLP(h_v) → score s_v ∈ [0, 1]   for each vertex v
+
+Interpretation depends on the problem:
   s_v ≈ 1 → v likely in clique / colored correctly / TRUE
   s_v ≈ 0 → v likely not in solution
-  
-The GNN is a function:  (graph, weights) → per-vertex scores
-To get a discrete solution: apply a decoding strategy.
+
+Decoding (not learned):
+  Top-k:  take k highest-scoring vertices
+  LPR:    remove lowest-scoring vertices until feasible
+  Other:  problem-specific rounding
+
+The scores are the learned output. The decoder is a design choice.
 ```
 
-**Speaker note:** "The scores are the output. To get an actual solution you round or apply a
-decoding heuristic. The connection between those scores and classical algorithmic concepts is
-exactly what we study."
+**Speaker note:** "The scores come from the learned parameters. The decoder does not — it's a
+separate design decision. A key result in Chapter 3 is that the same learned scores can give very
+different performance depending on which decoder you use. The concept is in the scores; the
+decoding strategy determines how well you extract it."
 
 ---
 
-#### Slide 11 — Belief propagation: the classical precursor
+#### Slide 14 — Belief propagation: the classical message-passing template
 
 **Purpose:** Set up the BP–GNN analogy for a theory audience.
 
-**Visual:** A small factor graph (variables = circles, clauses = squares). BP messages labeled along
-edges with their interpretation: "P(x=TRUE | neighbors)".
+**Visual:** A small factor graph (variables = circles, clauses = squares). Messages labeled along
+edges with their interpretation: "P(x=TRUE | neighbors)."
 
 **Slide text:**
 ```
 Belief propagation (BP):
   Messages along edges of a factor graph
-  Message = structured probabilistic summary
+  Message = a structured probabilistic summary
     (marginal belief, warning, bias, ...)
   Update rule: analytically derived from the probabilistic model
-  
-Works exactly on trees; approximate on graphs with cycles
-Used in: LDPC decoding, survey propagation, Ising models
+  Convergence: exact on trees; approximate (often good) on sparse graphs
+
+Connections:
+  Survey propagation: BP on random SAT → identifies backbone variables
+  LDPC decoding: BP on Tanner graph → near-optimal for some codes
 ```
 
 **Speaker note:** "BP is the gold standard of principled message passing. The messages have an
 interpretation — they represent beliefs about variable assignments. The update rule is derived from
-first principles. The question is: when you let a neural network learn its own version of BP, what
-does it discover?"
+first principles, not learned. The question for GNNs is: when you let a neural network learn its
+own version of BP, what does it discover?"
 
 ---
 
-#### Slide 12 — From belief propagation to a GNN: three steps
+#### Slide 15 — From belief propagation to a GNN
 
-**Purpose:** The central analogy. Build it carefully.
+**Purpose:** The central analogy. Build it step by step.
 
-**Visual:** Three-column progression.
-- Column 1 (BP): scalar/probability message, hand-designed update, probabilistic objective.
-- Column 2 (Relaxation): vector in ℝ^d replaces the scalar. Update still hand-designed.
-- Column 3 (GNN): learned vector message, learned update (MLP/GRU), task-driven loss.
+**Visual:** Three-column table progression.
+- Column 1 (BP): scalar/probability message, hand-designed update, probabilistic model objective.
+- Column 2 (Generalize message): vector in ℝ^d replaces the scalar.
+- Column 3 (GNN): learned vector message, learned update, task loss.
 
 **Slide text:**
 ```
@@ -360,92 +531,118 @@ Step 1 — Classical BP
 Step 2 — Generalize the message
   message(u→v) ∈ ℝ^d    (high-dimensional, latent)
 
-Step 3 — Learn the update rule
+Step 3 — Learn the update rule from data
   UPDATE(h_v, m_v) = GRU/MLP(h_v, m_v ; θ)
-  θ learned from data, guided by task loss
+
+Result: a GNN is BP-inspired high-dimensional learned message passing.
+        Not BP. But the right mental model for this audience.
 ```
 
-**Speaker note:** "The GNN is not BP. But for this audience, the BP analogy is the right mental
-model. Both pass messages along a factor/constraint graph. BP passes structured probabilistic
+**Speaker note:** "The GNN is not BP. But for this audience, the BP analogy is the right place
+to start. Both pass messages along a factor/constraint graph. BP passes structured probabilistic
 summaries; the GNN passes high-dimensional learned vectors. BP derives its update rule
-analytically; the GNN learns it from data. What did the GNN learn? That's a question about what
-it rediscovered from BP."
+analytically; the GNN learns it from data. The question of what the GNN learned is, in a sense,
+a question about what it rediscovered or reinvented from the BP world."
 
 ---
 
-#### Slide 13 — The loss function is where the task enters
+#### Slide 16 — The analogy has limits — and that is part of the puzzle
 
-**Purpose:** Complete the BP→GNN transformation.
+**Purpose:** Qualify the BP analogy before anyone in the audience objects. This earns credibility
+with a TCS / probability crowd.
 
-**Visual:** Comparison table: BP vs. GNN on four dimensions.
+**Visual:** Left column "What BP gives us": clean analytic rules, regime analysis, phase transition
+theory. Right column "What the GNN does that BP doesn't explain": generalizes beyond BP's
+known failure regimes, sometimes works near or past the clustering threshold.
 
 **Slide text:**
 ```
-                   BP              GNN
-Message:           hand-designed   learned ∈ ℝ^d
-Update:            analytic        trained (MLP/GRU)
-Objective:         probabilistic   task loss (e.g., SAT/UNSAT)
-Convergence:       proven (trees)  empirical
-Interpretability:  high            our question
+Classical BP has known failure regimes:
+  On random CSPs: BP works well in the replica-symmetric phase
+  Near and past clustering/condensation: naive BP fails or diverges
+  Beyond the satisfiability threshold: meaningless
+
+GNNs are not bound by those regimes in the same way:
+  They optimize a task loss, not a probabilistic model
+  They may learn to route information differently from BP
+
+Part of the puzzle:
+  Why do GNNs sometimes generalize beyond where BP is known to work?
+  That is still open. The concept-learning framework is one lens into it.
 ```
 
-**Speaker note:** "The GNN has more freedom: it chooses any representation it finds useful for the
-task. The interesting scientific question is whether, given this freedom, it converges to something
-interpretable. Spoiler: it often does — but the thing it converges to is familiar."
+**Speaker note:** "I want to flag this explicitly. If you're thinking 'but BP breaks down near
+the clustering threshold on random SAT' — you're right. GNNs don't literally run BP. They're
+BP-inspired high-dimensional learned procedures. The BP analogy is useful for building intuition,
+but it's not the literal algorithmic claim. One of the genuinely open questions is why GNNs
+sometimes manage to work in regimes where simple BP would fail. Our concept-learning framework
+is one step toward understanding that, not the final answer."
 
 ---
 
-#### Slide 14 — NeuroSAT: the original promise
+#### Slide 17 — NeuroSAT: the promise
 
-**Purpose:** Establish the empirical result that motivated the research program.
+**Purpose:** Establish the motivating result clearly, with corrected language.
 
 **Visual:** Two-column contrast. Left: small SAT formula graph (5 variables, 3 clauses).
-Right: large factor graph (schematic, many nodes). Underneath: training vs. test regime.
+Right: large factor graph (schematic). Underneath: training vs. test regime side by side.
 
 **Slide text:**
 ```
 NeuroSAT (Selsam et al., 2019):
   Architecture:   message-passing GNN on CNF factor graph
   Training:       SAT/UNSAT label only (single-bit supervision)
-  Training set:   n ∈ [10, 40] variables, near phase transition
-  Test:           n up to 2000 variables
-  
-Surprise: it generalizes.
-Question: what invariant did it latch onto?
+  Training set:   n ∈ [10, 40] variables, near SAT/UNSAT phase transition
+  Test:           much larger instances [VERIFY exact range from Selsam 2019]
+
+Observation:
+  The trained GNN showed surprisingly strong generalization beyond its training range.
+  The reason is not fully understood.
+
+Our question:
+  What did it learn internally?
 ```
 
-**Speaker note:** "NeuroSAT was trained with only a single bit of supervision per instance — SAT
-or UNSAT. The instances in training were small enough to solve exactly. Yet the same network,
-unchanged, generalizes to much larger instances. That's either magic, or the network found a
-structural principle that scales. We test the second hypothesis."
+**Speaker note:** "I want to repeat the caveat: NeuroSAT is not a general SAT solver. The
+original paper did not claim that. What it showed is that a very simple GNN, trained with
+one bit of supervision per instance, organized its internal representations in a way that
+generalized to much larger instances. That suggests it found something structural. Our project
+is to name that something."
 
 ---
 
-#### Slide 15 — Our research program: opening the black box
+#### Slide 18 — Chapter 1 partial answer + the research program
 
-**Purpose:** State the research question and the conceptual tool.
+**Purpose:** Close Chapter 1, revisit the running question, and introduce the concept-learning
+framework.
 
-**Visual:** Pipeline diagram: "Trained GNN → internal embeddings → concept probe → interpretable
-quantity."
+**Visual:** Running question displayed at top. Below: the Chapter 1 partial answer. Then the
+method pipeline.
 
 **Slide text:**
 ```
-We ask:   what is encoded in the GNN's learned embeddings?
+Running question: When a GNN appears to solve a hard combinatorial problem —
+                  what did it actually learn?
 
-Method:   concept learning
-  — project embeddings to low-dimensional PCA space
-  — ask: does the projection align with known algorithmic quantities?
-  — verify: a simple linear probe predicts the concept on held-out instances
+Chapter 1 answer (partial):
+  Maybe: a transferable message-passing rule that captures structural invariants.
+  But which rule? The training loss doesn't specify it.
+  That's the interpretability puzzle.
 
-A concept g(v) is operationally defined:
-  ĝ(v) = w⊤ h_v + b    (linear probe)
-  — decodable from embeddings across instances
-  — falsifiable: fails if support isn't predictable above baseline
+Our method — concept learning:
+  Project learned embeddings to low-dimensional PCA space.
+  Ask: does the projection align with known algorithmic quantities?
+  Verify: a simple linear probe predicts the concept on held-out instances.
+
+A concept is operationally defined:
+  ĝ(v) = w⊤ h_v + b   (linear probe, held-out instances)
+  Falsifiable: fails if the quantity isn't predictable above baseline.
 ```
 
-**Speaker note:** "We define concept rigorously: a concept is a quantity that a simple linear probe
-can predict from the embeddings on held-out instances. This rules out the possibility that we're
-pattern-matching into noise."
+**Speaker note:** "The concept-learning framework is the methodological core. We don't assume
+the model learned anything in particular. We ask whether specific classical algorithmic quantities
+are encoded in the embeddings, and we test that with a probe. If support is encoded, the probe
+can predict it from the embeddings on instances the probe never saw. Let's see what we find."
 
 ---
 
@@ -454,51 +651,77 @@ pattern-matching into noise."
 
 ---
 
-#### Slide 16 — Concept learning in AI: why it matters
+#### Slide 19 — Running question, Chapter 2: SAT and Coloring
 
-**Purpose:** Give the broader XAI context. Don't linger.
+**Purpose:** Signal the chapter transition and re-anchor the running question.
 
-**Visual:** Three boxes: vision ("beak" in a bird classifier), medicine ("lesion boundary"),
+**Visual:** Running question at top with Chapter 2 highlighted. A small SAT factor graph and
+small 3-colored graph side by side — the two problems for this chapter.
+
+**Slide text:**
+```
+Running question: What did the GNN actually learn?
+
+Chapter 2 setting:
+  Problem 1 — SAT (NeuroSAT, Shoham et al. 2026)
+  Problem 2 — Graph 3-Coloring (GNN-GCP, Shoham et al. 2025)
+
+Both GNNs trained with single-bit binary supervision only.
+We probe their learned embeddings.
+```
+
+**Speaker note:** "We now ask the running question for two constraint-satisfaction problems.
+Both GNNs were trained with only a binary label. Neither loss mentions any solver quantity.
+Let me show you what we found."
+
+---
+
+#### Slide 20 — Concept learning in AI: why it matters here
+
+**Purpose:** Give the broader XAI context efficiently. Don't linger.
+
+**Visual:** Three example boxes: vision ("beak" in a bird classifier), medicine ("lesion boundary"),
 algorithms ("variable confidence").
 
 **Slide text:**
 ```
-XAI usually:  which input features drove this decision?
-              (SHAP, LIME, GradCAM)
+XAI usually: which input features drove this decision?
+             (SHAP, LIME, GradCAM)
 
-For algorithms: wrong question.
-  "x₁ appears in clause 7" is not a concept — not transferable.
-  "x₁ has high confidence" is a concept — generalizes across instances.
+For algorithmic tasks: wrong level of analysis.
+  "x₁ appears in clause 7" is a feature — instance-specific, not transferable.
+  "x₁ has high support" is a concept — meaningful across instances.
 
-We want:  compact, interpretable quantities that
-          explain the model's internal dynamics across inputs and iterations.
+We want:
+  Compact, interpretable quantities that explain the model's internal dynamics
+  across inputs and iterations — not just for one instance.
 ```
 
-**Speaker note:** "Standard XAI finds important features. For combinatorial tasks, that's not
-enough. We need concepts that have algorithmic meaning and that explain behavior across
-instances, not just for one input. That requires looking at the internal representations as the
-model runs, not just at the output."
+**Speaker note:** "Standard XAI methods find important features for a specific input. For
+combinatorial tasks, we need something different: global algorithmic concepts that explain how
+the model behaves across all instances. That requires looking at the geometry of the internal
+representations over many runs, not just attribution maps for one input."
 
 ---
 
-#### Slide 17 — SAT as a factor graph: running example
+#### Slide 21 — SAT as a factor graph: our running example
 
-**Purpose:** Introduce the SAT instance visually. Use a concrete small formula.
+**Purpose:** Introduce the SAT instance visually before defining support.
 
 **Visual:** TikZ factor graph. Formula: (x₁ ∨ x̄₂ ∨ x₃) ∧ (x₁ ∨ x₂ ∨ x̄₃).
-Variable nodes = circles, clause nodes = squares, edges connecting each variable to its clauses.
+Variable nodes = circles, clause nodes = squares, edges connecting literals to their clauses.
 
 **Slide text:**
 ```
 CNF formula: (x₁ ∨ x̄₂ ∨ x₃) ∧ (x₁ ∨ x₂ ∨ x̄₃)
 
 Factor graph:
-  Variable nodes: x₁, x₂, x₃ (and negations x̄₁, x̄₂, x̄₃)
+  Variable nodes: x₁, x₂, x₃  (and negations x̄₁, x̄₂, x̄₃)
   Clause nodes:   C₁, C₂
   Edges:          literal ↔ clause where literal appears
 
-NeuroSAT runs message passing on this graph.
-We ask: what do the node embeddings encode?
+NeuroSAT runs T rounds of message passing on this graph.
+We ask: what do the node embeddings encode after training?
 ```
 
 **Speaker note:** "NeuroSAT operates on the factor graph, not the formula directly. Literals and
@@ -507,36 +730,38 @@ I'll tell you what we found in those messages."
 
 ---
 
-#### Slide 18 — What is "support"?
+#### Slide 22 — What is "support"?
 
-**Purpose:** Introduce the key concept clearly before showing the data.
+**Purpose:** Introduce the key concept formally before showing any data.
 
-**Visual:** Toy formula. Clause of type TFF (one TRUE literal, two FALSE) highlighted. The TRUE
-literal labeled "the sole supporter of this clause."
+**Visual:** Toy formula. A clause of type TFF (one TRUE literal, two FALSE) highlighted. The
+TRUE literal labeled "the sole supporter of this clause."
 
 **Slide text:**
 ```
 Assignment ϕ. Variable x. Clause C.
 
 x supports C under ϕ  ⟺
-    C is satisfied, and x is the ONLY literal satisfying it.
-    (the other two literals are FALSE — clause type TFF)
+    C is satisfied, and x is the ONLY satisfied literal in C.
+    (clause type TFF: one True, two False)
 
 support_ϕ(x) = |{clauses C : x alone satisfies C}|
 
-High support:  x is load-bearing → flipping x breaks many clauses
-Low support:   x is easily replaceable → safe to flip
+High support:  x is load-bearing → flipping x immediately breaks many clauses
+Low support:   x is replaceable → safe to flip in local search
+
+This quantity appears in: WalkSAT, Survey Propagation, backbone analysis.
 ```
 
-**Speaker note:** "Support is a classical notion. It appears in WalkSAT, survey propagation, and
-backbone analysis — all different algorithmic traditions that independently discovered the same
-signal. A variable with high support is one you cannot safely change. It's a confidence signal.
-Now I'll show you that NeuroSAT, trained only on SAT/UNSAT labels with no knowledge of
-support, encodes it anyway."
+**Speaker note:** "Support is a classical notion. Three very different algorithmic traditions —
+WalkSAT (local search), Survey Propagation (message passing), and backbone analysis
+(combinatorial structure) — independently discovered the same signal. A variable with high
+support is one you cannot safely flip. It's a confidence signal. Now I'll show you that NeuroSAT,
+trained only on SAT/UNSAT labels and never told about support, encodes precisely this quantity."
 
 ---
 
-#### Slide 19 — Support as confidence: a toy example
+#### Slide 23 — Support as confidence: a toy example
 
 **Purpose:** Make the intuition concrete before showing the PCA plots.
 
@@ -546,31 +771,32 @@ support, encodes it anyway."
 
 **Slide text:**
 ```
-High support:
+High support (confidence):
   x₁ = TRUE. Of 4 clauses containing x₁:
   3 are satisfied only because of x₁ (type TFF).
   Flipping x₁ breaks those 3 clauses immediately.
-  → Confidence is HIGH. Do not flip x₁.
+  → Do not flip x₁.
 
-Low support:
+Low support (uncertain):
   x₁ = TRUE. All clauses containing x₁ have other TRUE literals.
   Flipping x₁ costs nothing immediately.
-  → Confidence is LOW. Safe to flip.
+  → Safe to flip.
 ```
 
-**Speaker note:** "If you were designing a local-search SAT solver, support is exactly the kind of
-thing you'd track. The surprise is that NeuroSAT — which saw only binary SAT/UNSAT labels and
-never heard of support — encodes precisely this quantity in its embeddings."
+**Speaker note:** "If you were designing a local-search SAT solver, support is exactly the kind
+of thing you'd track. The variable with high support is one you want to protect. The variable
+with low support is one you can explore. NeuroSAT, trained with no knowledge of this, encodes
+it anyway. That's the finding."
 
 ---
 
-#### Slide 20 — NeuroSAT embeddings: PCA reveals structure
+#### Slide 24 — NeuroSAT embeddings: PCA reveals structure
 
 **Purpose:** Show the empirical evidence for concept emergence.
 
-**Visual:** Schematic of PCA plot (Fig. 2 in the SAT concept learning paper). Literal embeddings
-projected to 2D. Literal and negation on opposite sides of PC1 = 0. Support clauses (TFF)
-with higher |PC1| values.
+**Visual:** Schematic of the PCA plot (Fig. 2 in the SAT concept learning paper). Literal embeddings
+projected to 2D. Literal and its negation on opposite sides of PC1 = 0. Support clauses (TFF)
+with higher |PC1| values. Color coding by support count.
 
 **Slide text:**
 ```
@@ -579,84 +805,58 @@ PCA of NeuroSAT's internal literal embeddings
 
 PC1 explains ~90% of variance
 PC2 explains ~8% of variance
-(~98% captured by 2 components out of 128)
+(~98% captured by 2 components out of 128 dimensions)
 
 PC1 value of a literal:
-  far positive  = TRUE with high support
+  far positive  = TRUE, high support
   near 0        = uncertain, low support
-  far negative  = negation of above
+  far negative  = negation of above (symmetric)
 ```
 
 **Speaker note:** "The model is 128-dimensional. Yet 98% of what matters lives in 2 dimensions,
 and those 2 dimensions directly encode support and assignment consistency. We verify this with
-linear probes on held-out instances — it's not just a visual impression."
+linear probes on held-out instances — the structure you see here is predictive, not decorative."
 
 ---
 
-#### Slide 21 — Main finding: support governs NeuroSAT's dynamics
+#### Slide 25 — Main finding: support governs NeuroSAT's dynamics
 
-**Purpose:** State the result precisely.
+**Purpose:** State the result precisely — both empirical and theoretical components.
 
-**Visual:** Schematic: "Support (PC1 of embedding) → governs which variables are flipped each
-iteration → support-core emerges."
+**Visual:** Schematic: "Support (PC1 of embedding) → governs which variables get flipped each
+iteration → support-core emerges (analogous to r-core in graphs)."
 
 **Slide text:**
 ```
 Theorem (informal):
   Under assumptions on instance distribution and weights,
   NeuroSAT's dynamics fix variables in decreasing order of support,
-  starting with the r-support core — a combinatorial structure
-  analogous to the graph-theoretic r-core.
+  starting with the r-support core — a structure analogous to the graph r-core.
 
 Empirically:
   Linear probe predicts support from embeddings on held-out instances.
-  Variables with PC1 near 0 get reassigned in the next iteration.
+  Variables with PC1 near 0 are reassigned in the next iteration.
   Variables with PC1 far from 0 are locked in, consistent with a satisfying assignment.
+
+Payoffs:
+  StudentNeuroSAT: 91% fewer parameters, comparable performance.
+  SupportSAT-01: WalkSAT variant that converges faster on n = 1500.
 ```
 
-**Speaker note:** "The result has two parts: an empirical finding (support is decodable from
-embeddings) and a theoretical analysis (under certain assumptions, the dynamics formally reduce
-to tracking the support-core). The theory is for a simplified architecture version, but it gives a
-mechanistic account of what the full model is doing."
+**Speaker note:** "Two parts: empirical (support is decodable by a linear probe) and theoretical
+(under certain assumptions, the dynamics formally reduce to tracking the support-core). The
+theory is for a simplified architecture, but it gives a mechanistic account of what the full model
+is doing. And the concept is immediately useful: once you know the model learned support, you
+can compress it and improve WalkSAT with the insight."
 
 ---
 
-#### Slide 22 — From insight to compression: StudentNeuroSAT
+#### Slide 26 — Graph coloring: same concept, different geometry
 
-**Purpose:** Show the practical payoff of the concept-learning approach.
-
-**Visual:** Teacher–student diagram. NeuroSAT (large, 128-dim LSTM) passes concept-level
-knowledge (support encoding) to StudentNeuroSAT (smaller). Convergence curves for WalkSAT
-vs. SupportSAT-01 underneath (from Fig. 3 of the paper).
-
-**Slide text:**
-```
-If support explains the behavior:
-  → train a student GNN to mimic the embedding, not the label
-  → instead of SAT/UNSAT supervision, train on teacher's latent representations
-
-StudentNeuroSAT:   91% fewer parameters than NeuroSAT
-Performance:       comparable to the teacher
-
-SupportSAT-01 (new WalkSAT variant):
-  Built from concept insights.
-  Converges faster than WalkSAT on n = 1500 instances.
-```
-
-**Speaker note:** "Two payoffs from interpretability. First: compression — once you know the
-concept, you can train directly toward it, and a much smaller model captures the behavior.
-Second: algorithmic improvement — the concept gives a design principle for improving classical
-solvers. SupportSAT is a WalkSAT variant that picks which variable to flip using support, and
-it's strictly faster on large instances."
-
----
-
-#### Slide 23 — Graph coloring: same concept, different geometry
-
-**Purpose:** Show that the finding is not SAT-specific.
+**Purpose:** Show that support reappears in a structurally different problem.
 
 **Visual:** Left: small valid 3-colored graph (6 vertices). Right: 2D PCA of GNN-GCP embeddings
-showing the triangular structure.
+showing the triangular structure. High-support vertices near triangle corners.
 
 **Slide text:**
 ```
@@ -664,27 +864,28 @@ GNN-GCP (Lemos et al., 2019):
   Trained to predict 3-colorability (binary label only)
   Message-passing LSTM, 64-dim embeddings
 
+Support in coloring:
+  support(v) = number of neighbors v has in each color class other than its own
+
 What the 2D PCA projection shows:
-  Embeddings form a triangle.
-  Color classes cluster near different triangle vertices.
-  High-support vertices are closest to triangle corners.
-  Low-support vertices sit near the center.
+  Embeddings form a triangle; color classes cluster near corners.
+  High-support vertices are closest to triangle corners (committed to their color).
+  Low-support vertices sit near the center (color assignment still uncertain).
 ```
 
-**Speaker note:** "In graph coloring, 'support of vertex v' means the number of neighbors v has
-in each color class other than its own. A high-support vertex has many neighbors of conflicting
-colors — it's strongly constrained, and the network has committed to its color. The triangular
-geometry is how the GNN encodes the three-way color assignment in 2D. Color classes are the
-three corners of the triangle."
+**Speaker note:** "In graph coloring, support has an analogous meaning: the number of neighbors
+in competing color classes. A high-support vertex is one that has many neighbors of conflicting
+colors — it's strongly committed to its own color class. Low-support vertices are still ambiguous.
+The GNN encodes this with a beautiful geometry: the triangle."
 
 ---
 
-#### Slide 24 — Coloring: support is confidence
+#### Slide 27 — Coloring: support connects to a 1994 algorithm
 
-**Purpose:** State the coloring finding and connect explicitly to SAT.
+**Purpose:** Make the classical connection explicit and surprising.
 
-**Visual:** Side-by-side: SAT (literals on PC1 axis, support = load-bearing) and Coloring (vertices
-near triangle corners, support = color-committed). Same concept, different representation.
+**Visual:** Side-by-side: SAT (literals on PC1 axis) and Coloring (vertices near triangle corners).
+Same concept, different representation. Below: reference to Alon–Kahale (1994).
 
 **Slide text:**
 ```
@@ -693,51 +894,52 @@ Support in coloring: neighbors v has in each other color class
 
 In both cases:
   High support → high confidence → embedding far from ambiguous region
-  Low support  → low confidence → near center, assignment may still change
+  Low support  → low confidence  → near center, assignment may still change
 
-The concept was used in hand-designed algorithms:
-  WalkSAT (SAT)
-  Alon–Kahale coloring algorithm (1994)
+This concept was used in hand-designed algorithms:
+  WalkSAT (1994) for SAT
+  Alon–Kahale (1994) for graph coloring
 
-GNNs rediscover them from data.
+GNNs trained in 2019 and 2023 rediscover them from data, without supervision.
 ```
 
-**Speaker note:** "The connection to Alon and Kahale (1994) is particularly satisfying. They
-designed a coloring algorithm in 1994 based on exactly this support concept. The GNN, trained
-thirty years later with no knowledge of that algorithm, encodes the same quantity in its embeddings.
-That's the central message: GNNs don't invent new algorithmic primitives. They rediscover
-classical ones."
+**Speaker note:** "The Alon–Kahale coloring algorithm from 1994 was designed around exactly
+this support concept. The GNN, trained thirty years later with no knowledge of that algorithm,
+encodes the same quantity in its embeddings. That's the central message of Chapter 2: GNNs
+don't invent new algorithmic primitives. They rediscover classical ones."
 
 ---
 
-#### Slide 25 — Chapter 2 takeaway
+#### Slide 28 — Chapter 2: running question answered
 
-**Purpose:** Pause and crystallize before Chapter 3.
+**Purpose:** Pause, crystallize, and revisit the running question explicitly.
 
-**Visual:** Two-column summary table: SAT row and Coloring row.
+**Visual:** Running question at top, now with the Chapter 2 answer filled in.
 
 **Slide text:**
 ```
-SAT:
-  Model:     NeuroSAT
-  Concept:   support (clauses uniquely satisfied by x)
-  Geometry:  PC1 encodes confidence; symmetric around 0
-  Payoff:    91% compression, faster WalkSAT variant
+Running question: What did the GNN actually learn?
 
-Coloring:
-  Model:     GNN-GCP
-  Concept:   support (neighbors in other color classes)
-  Geometry:  triangular embedding; corners = color classes
+Chapter 2 answer:
+  In SAT and Coloring — it learned support.
+  A classical confidence-like signal from solver theory.
+  Present in both GNNs, without explicit supervision.
 
-Theme: GNNs trained with binary supervision
-       learn classical solver-relevant quantities.
-       The magic has a name.
+Evidence:
+  SAT:       linear probe, PCA structure, theoretical analysis
+  Coloring:  linear probe, triangular embedding geometry
+
+Payoff:
+  91% model compression (StudentNeuroSAT)
+  Faster WalkSAT variant (SupportSAT-01)
+
+Does the same pattern hold for a structurally different problem?
 ```
 
-**Speaker note:** "Two different GNNs, two different problems, different architectures, different
-loss functions. Same outcome: the key emergent concept is support, a quantity that classical
-algorithmic theory identified decades ago. This is not a coincidence, and the next chapter will
-show the same pattern on a structurally different problem."
+**Speaker note:** "Chapter 2 answer: support. The GNN, trained with only binary labels on two
+very different constraint-satisfaction problems, learned to compute the same classical algorithmic
+quantity that human experts designed into their solvers. Let's now move to a structurally different
+problem — Max-Clique — and ask the same question."
 
 ---
 
@@ -746,62 +948,64 @@ show the same pattern on a structurally different problem."
 
 ---
 
-#### Slide 26 — Max-Clique: a different kind of test
+#### Slide 29 — Running question, Chapter 3: Max-Clique
 
-**Purpose:** Motivate why clique is a useful third test case.
+**Purpose:** Signal chapter transition and re-anchor the running question.
 
-**Visual:** A graph with a highlighted 4-clique. Vertex degrees labeled.
+**Visual:** Running question at top. Small planted clique graph on the right.
 
 **Slide text:**
 ```
-Max-Clique: find the largest complete subgraph.
+Running question: What did the GNN actually learn?
 
-Structurally different from SAT/Coloring:
+Chapter 3 setting:
+  Problem — Max-Clique (Shoham et al., AAAI 2026)
   No factor graph. No clause structure.
   The signal is in vertex degrees, not constraint satisfaction.
-  Classical message-passing literature is thinner here.
 
-Same meta-question: what concept does the GNN learn?
+If the concept-learning story is robust,
+it should survive this structural change.
 ```
 
-**Speaker note:** "SAT and coloring both have a natural factor-graph structure. Clique is
-different — purely graph-theoretic. If the concept-learning story is robust, it should survive this
-change. And it does — though the concept is different: instead of support in the constraint sense,
-we find degree-based ranking."
+**Speaker note:** "SAT and coloring both have a natural factor-graph structure — that's where BP
+is most natural. Clique is different. It's a purely graph-theoretic problem with no explicit
+constraints. The fact that a similar concept-learning story holds there is a stronger test of
+the framework."
 
 ---
 
-#### Slide 27 — Planted clique: three regimes
+#### Slide 30 — Planted clique: three regimes
 
 **Purpose:** Introduce the benchmark and the theoretical difficulty landscape.
 
 **Visual:** Three labeled regions on a number line of planted clique size k.
-- Hard: k = O(√n) — planted clique conjecture; conjectured intractable.
+- Hard: k = O(√n) — planted clique conjecture; believed computationally intractable.
 - Medium: k = Ω(√n) — spectral methods and LPR work.
 - Easy: k = Ω(√n log n) — simple degree ranking suffices.
 
 **Slide text:**
 ```
 Random graph G(n, 1/2):
-  Largest clique ≈ 2 log₂ n   (believed hard to find)
+  Largest clique ≈ 2 log₂ n  (believed hard to find by efficient algorithms)
 
-Planted clique: insert a k-clique into G(n, 1/2)
+Planted clique: add a k-clique to G(n, 1/2)
 
-Regimes (calibrated empirically for n = 1000):
+Difficulty regimes (calibrated empirically for n = 1000):
   Easy:   k ≥ ~62  — Top-k by degree recovers the clique
-  Medium: k ∈ [36, 61] — LPR needed
+  Medium: k ∈ [36, 61] — LPR or spectral methods needed
   Hard:   k ≤ 35  — planted clique conjecture; no known efficient algorithm
 ```
 
-**Speaker note:** "We evaluate GNNs on instances calibrated to this landscape. This lets us ask:
-does the GNN work in the easy, medium, or hard regime? Without this calibration, you can't tell
-whether a GNN 'solving' clique is impressive or trivial."
+**Speaker note:** "We evaluate GNNs on instances calibrated to this landscape. This is critical:
+without knowing the difficulty regime, you can't tell whether a GNN 'solving' clique is impressive
+or trivial. Previous GNN evaluations for clique typically used uncontrolled benchmarks. Our
+contribution here is partly methodological: evaluate under principled hardness control."
 
 ---
 
-#### Slide 28 — Degree as a classical signal: helpful but noisy
+#### Slide 31 — Degree as a classical signal: helpful but noisy
 
-**Purpose:** Establish the baseline before introducing the GNN.
+**Purpose:** Establish the degree baseline before introducing the GNN.
 
 **Visual:** Small planted clique graph (n = 10, k = 4). Degree table:
 clique vertices {6, 7, 7, 8}; non-clique vertices {2, 3, 4, 7}. One non-clique vertex at degree 7 —
@@ -810,23 +1014,25 @@ the "impostor" — highlighted.
 **Slide text:**
 ```
 Degree heuristic:
-  Clique vertices receive a degree "boost" from within the clique.
+  Clique vertices receive a degree "boost" from the planted edges.
   Sort vertices by degree, take top k.
 
-Works in the Easy regime.
+Works in the Easy regime: the boost is large enough.
 
-Fails when k is smaller:
-  "Impostors" — non-clique vertices with high degree — creep in.
-  Top-k selects them. The candidate is not a valid clique.
+Fails when k is smaller (Medium/Hard):
+  "Impostors" — non-clique vertices with high random degree — creep into the top k.
+  The candidate set is not a valid clique.
+
+Classical open question: what signal, beyond degree, helps in the Medium regime?
 ```
 
-**Speaker note:** "The degree heuristic is the simplest possible approach and it works in easy
-cases. In medium and hard cases, it gets fooled by impostors. The question is whether the GNN
-does anything more clever — or whether it just learns a sophisticated version of degree."
+**Speaker note:** "The degree heuristic is the simplest possible approach. In easy cases it's
+enough. In medium and hard cases it's fooled by impostors. The interesting question is whether
+the GNN does something more clever — or whether it just learns a sophisticated version of degree."
 
 ---
 
-#### Slide 29 — What the GNN learns: degree-based ranking
+#### Slide 32 — What the GNN learns: degree-based ranking
 
 **Purpose:** State the core finding for clique.
 
@@ -836,130 +1042,168 @@ score vs. degree scatter plot showing near-linear relationship.
 **Slide text:**
 ```
 GNN embedding analysis (PCA):
-  PC1 of vertex embeddings predicts vertex degree with high correlation.
-  Output scores ≈ monotone function of degree.
+  PC1 of vertex embeddings: highly correlated with vertex degree.
+  GNN output scores ≈ monotone function of degree.
 
 Finding:
   The GNN learns degree-based ranking.
-  It does not appear to learn a fundamentally different signal.
+  It does not appear to learn a fundamentally new signal.
 
 But: the decoder matters.
   Top-k with degree fails on medium instances.
-  Can a smarter decoder close the gap?
+  A smarter decoder improves performance substantially.
 ```
 
-**Speaker note:** "The GNN is essentially doing sophisticated degree estimation — it gets a better
-estimate than raw degree because it uses multi-hop information, but the principle is the same. The
-concept is not support in the SAT sense: it's ranking, specifically degree-like ranking. The
-interesting result comes next: even with this relatively simple concept, a better decoder
-significantly improves performance."
+**Speaker note:** "The GNN is doing sophisticated degree estimation — it uses multi-hop
+information so it's better than raw degree, but the principle is the same. The concept is not
+support in the SAT/coloring sense: it's ranking, specifically degree-like ranking. The interesting
+result comes next: even with this relatively simple concept, a better decoder changes the outcome
+substantially in the medium regime."
 
 ---
 
-#### Slide 30 — Top-k vs. LPR: two decoders, very different performance
+#### Slide 33 — Top-k vs. LPR: two decoders, very different performance
 
 **Purpose:** Introduce LPR and show the performance gap.
 
-**Visual:** Side-by-side. Left: Top-k selects k highest-scoring vertices. Right: LPR iteratively
-removes the lowest-scoring vertex until the remainder is a clique.
+**Visual:** Side-by-side comparison.
+- Left (Top-k): select k highest-scoring vertices. Impostor included.
+- Right (LPR): iteratively remove lowest-scoring vertex until remainder is a clique. Impostor eliminated.
 
 **Slide text:**
 ```
 Top-k:
   Select k vertices with highest GNN scores.
-  Fast: O(n²).
-  Fails on Medium instances: impostors included.
+  O(n²). Fails on Medium instances: impostors included.
 
 LPR — Least-Probable Removal:
-  Start with all vertices.
-  Remove lowest-scoring vertex (least likely in clique).
+  Start with all n vertices.
+  Remove vertex with lowest score (least likely to be in clique).
   Repeat until the remaining set forms a clique.
-  O(n³), practical (avg ~25s; peak ~90s for n = 47k).
+  O(n³), practical: avg ~25s; peak ~90s for n = 47k.
 
 LPR significantly outperforms Top-k in Medium and Hard regimes.
 ```
 
-**Speaker note:** "The insight is different from Top-k's perspective. Rather than building up a
-clique by adding likely candidates, LPR prunes away unlikely ones. When impostors are present,
-LPR removes them because they have lower scores than genuine clique vertices. Top-k would
-have included them immediately. The underlying concept is the same — degree-like ranking — but
-the decoding strategy changes the outcome substantially."
+**Speaker note:** "LPR inverts the perspective: instead of selecting likely clique vertices, it
+prunes unlikely ones. When impostors are present, they have lower scores than genuine clique
+vertices — LPR removes them. Top-k would have included them immediately. Same underlying
+concept (degree-based ranking), very different decoding strategy, substantially different results."
 
 ---
 
-#### Slide 31 — Cross-domain: the same GNN solves Sparse PCA
+#### Slide 34 — Cross-domain: the same GNN solves Sparse PCA
 
-**Purpose:** One of the strongest results. Show the universality of the learned principle.
+**Purpose:** The universality result — one of the strongest in the clique paper.
 
-**Visual:** Two-panel diagram. Left: graph with planted clique, vertices color-coded by degree
-boost. Right: covariance matrix with planted spike, rows color-coded by row-sum. Connection
-arrow labeled "row-sum ranking."
+**Visual:** Two-panel diagram.
+- Left: graph with planted clique, vertices color-coded by degree boost.
+- Right: covariance matrix with planted spike, rows color-coded by row-sum.
+- Connection arrow: "row-sum ranking."
 
 **Slide text:**
 ```
 Sparse PCA (single-spike model):
-  Covariance Σ = I + β·vv⊤, where v is sparse (size k).
+  Covariance Σ = I + β·vv⊤,  v sparse (size k).
   Goal: recover the support of v.
 
-Connection to clique:
-  Clique:      degree boost for clique vertices
-  Sparse PCA:  larger row-sums for spike variables
+Structural analogy to clique:
+  Clique vertices:   higher degree due to within-clique edges
+  Spike variables:   larger row-sums due to the β·vv⊤ perturbation
 
-Experiment:
+Transfer experiment:
   GNN trained on Max-Clique → applied to Sparse PCA → succeeds.
   GNN trained on Sparse PCA → applied to Max-Clique → succeeds.
 
-Learned principle: row-sum ranking — universal across both domains.
+The learned principle: row-sum ranking — universal across both domains.
+
+New algorithmic result: the Max-Clique GNN with LPR is the first
+combinatorial algorithm matching Covariance Thresholding for Sparse PCA,
+with no hyperparameters.
 ```
 
-**Speaker note:** "We trained a GNN to find cliques. We then gave it a covariance matrix from a
-completely different problem: recovering a sparse principal component. It succeeds — because both
-problems share the same mathematical structure. In learning degree ranking for cliques, the GNN
-learned row-sum ranking in general. And we show a new algorithmic result: the Max-Clique GNN
-with LPR is the first combinatorial algorithm that matches Covariance Thresholding, the spectral
-state-of-the-art for Sparse PCA, without any hyperparameters."
+**Speaker note:** "We trained a GNN to find cliques. We then gave it a covariance matrix from
+Sparse PCA — a completely different problem. It succeeds, because both problems share the same
+underlying mathematical structure: identify a small subset with elevated row-sums. In learning
+degree ranking for cliques, the GNN learned row-sum ranking in general. And we prove a new
+algorithmic result: the Max-Clique GNN with LPR is the first combinatorial algorithm that matches
+Covariance Thresholding, the spectral state-of-the-art for Sparse PCA, with no hyperparameters."
 
 ---
 
-#### Slide 32 — Chapter 3 takeaway
+#### Slide 35 — Chapter 3: running question answered
 
-**Purpose:** Summarize Chapter 3 and bridge to Chapter 4.
+**Purpose:** Crystallize Chapter 3 and revisit the running question.
+
+**Visual:** Running question with Chapter 3 answer filled in. Summary table showing Chapters 2
+and 3 together.
 
 **Slide text:**
 ```
-Clique and Sparse PCA:
-  Concept:   degree-based (row-sum) ranking
-  Decoder:   LPR outperforms Top-k
-  Transfer:  same GNN solves both problems
+Running question: What did the GNN actually learn?
 
-Theme persists:
-  GNN success explained by a classical, interpretable concept.
-  The concept here is structural (degree/ranking), not constraint-based.
+Chapter 3 answer:
+  In Max-Clique — it learned degree-based (row-sum) ranking.
+  A classical signal from planted-graph theory.
+  Transfers directly to Sparse PCA.
 
-Chapter 4: what happens when the task is approximation vs. exact solving?
-  Can we force the GNN to cross the threshold from approximating to solving?
-  What determines whether it can?
+Chapter 2 answer (recap):
+  In SAT/Coloring — it learned support.
+
+Theme:
+  Different problem structures → different concepts.
+  But in each case: a classical, analyzable, interpretable quantity.
+
+Chapter 4: what if we ask not "what did the GNN learn"
+           but "what must it learn in order to solve, not just approximate"?
 ```
 
-**Speaker note:** "So far we've analyzed trained black boxes and found interpretable concepts
-inside. In the final chapter, we show that the presence or absence of a concept — specifically
-confidence/support — determines whether a GNN approximates or solves. This is a design
-principle, not just a retrospective observation."
+**Speaker note:** "Chapter 3 answer: degree ranking. Different from support, but still a classical
+signal. The GNN didn't invent anything new. Let's now go to Chapter 4, where we flip the question:
+instead of analyzing what a given GNN learned, we ask what concept is necessary for a GNN to
+cross the threshold from approximating to solving."
 
 ---
 
 ### Chapter 4 — The Last Percent: Approximation, Solving, and the Concept Gap
-*(~8 slides)*
+*(~9 slides)*
 
 ---
 
-#### Slide 33 — The approximation–solving gap
+#### Slide 36 — Running question, Chapter 4: SDP / OptGNN
+
+**Purpose:** Signal chapter transition and frame the new angle on the running question.
+
+**Slide text:**
+```
+Running question: What did the GNN actually learn?
+
+Chapter 4 new angle:
+  Instead of asking what a given model learned,
+  we ask: what must a model learn in order to solve, not just approximate?
+
+Setting:
+  OptGNN (Yau et al., NeurIPS 2024) and controlled variants.
+  Problem: SAT and NAE-SAT (hypergraph 2-coloring).
+  We introduce architectural modifications and ask:
+  which one enables exact solving? And why?
+```
+
+**Speaker note:** "This chapter turns the question around. Instead of reverse-engineering a
+trained model, we run a controlled design experiment. We start from a well-understood
+architecture (OptGNN), make controlled modifications inspired by classical heuristic design, and
+ask which modification enables the transition from strong approximation to exact solving. The
+answer, again, is a classical concept."
+
+---
+
+#### Slide 37 — The approximation–solving gap
 
 **Purpose:** Introduce the central distinction of Chapter 4.
 
 **Visual:** A number line from 0% to 100% constraint satisfaction.
-- "Random baseline" marked at 7/8 = 87.5%.
-- "OptGNN" marked at ~99%.
+- "Random baseline" at 7/8 ≈ 87.5%.
+- "OptGNN" at ~99%.
 - "Solving" at 100%.
 - The gap 99% → 100% labeled "the last percent."
 
@@ -967,28 +1211,28 @@ principle, not just a retrospective observation."
 ```
 Random 3-SAT:
   A random assignment satisfies each clause with probability 7/8.
-  Strong approximation (87.5%) is trivially achievable.
+  So 87.5% approximation is trivially achievable.
 
 OptGNN (Yau et al., NeurIPS 2024): reaches ~99%.
 
 Exact solving (100%):
-  Håstad: improving beyond 7/8 is NP-hard in the worst case.
-  For random instances above threshold: the last 1% requires
-  coordinated changes across many variables.
+  Håstad (2001): improving beyond 7/8 is NP-hard in the worst case.
+  For random instances above the threshold: the last 1% requires
+  coordinated changes across many variables simultaneously.
 
-From ~99% to 100% is not a small step — it's a qualitative transition.
+From ~99% to 100% is not a marginal gain — it is a qualitative transition.
 ```
 
-**Speaker note:** "I want to separate two very different capabilities. An assignment satisfying 99%
-of clauses may still be far from any satisfying assignment — the last constraint violations often
-propagate into many required changes. This is the gap we study, and understanding it requires
-looking at what concept the model has (or hasn't) learned."
+**Speaker note:** "I want to separate two very different capabilities. An assignment satisfying
+99% of clauses can still be far from any satisfying assignment — the last violated clauses may
+trigger cascades of required changes. This is the gap we study, and understanding it requires
+asking what concept the model has or hasn't learned."
 
 ---
 
-#### Slide 34 — OptGNN: SDP relaxations built into a GNN
+#### Slide 38 — OptGNN: SDP relaxations built into a GNN
 
-**Purpose:** Introduce the starting point for Chapter 4 concisely.
+**Purpose:** Introduce the starting point concisely.
 
 **Visual:** Pipeline: "SDP relaxation → projected gradient descent = message passing on graph →
 GNN parameterization → train with SDP-inspired loss."
@@ -997,173 +1241,157 @@ GNN parameterization → train with SDP-inspired loss."
 ```
 OptGNN (Yau et al., NeurIPS 2024):
   Key insight: solving a certain SDP via projected gradient descent
-               is equivalent to message passing on the graph.
-               
-  → Design a GNN whose architecture captures this algorithm.
+               equals message passing on the graph.
+  → Design a GNN architecture that captures this algorithm.
   → Train with a continuous SDP-inspired unsupervised loss.
   → At inference: round continuous embeddings to discrete assignment.
 
-Result: near-optimal approximation on Max-Cut, Max-3-SAT, Min-Vertex-Cover.
-Limitation: strong approximation, but often fails to satisfy all constraints.
+Result: near-optimal approximation on Max-Cut, Max-3-SAT, Min-Vertex-Cover
+        (provably UGC-optimal approximation guarantees).
+Limitation: strong approximation, but often fails to satisfy all constraints exactly.
 ```
 
-**Speaker note:** "OptGNN is an elegant construction — the architecture is derived from an
-approximation algorithm, not just empirically tuned. It has provable guarantees under the Unique
-Games Conjecture. But its loss function is a continuous relaxation, not designed to enforce discrete
-feasibility. That's the tension we study."
+**Speaker note:** "OptGNN is an elegant construction. The architecture is derived from an
+approximation algorithm, not just empirically tuned. But its loss function is a continuous
+relaxation designed for approximation, not for enforcing discrete feasibility. That's the
+tension we study."
 
 ---
 
-#### Slide 35 — Three controlled modifications
+#### Slide 39 — Three controlled modifications and a sharp transition
 
-**Purpose:** Describe the experimental design concisely.
+**Purpose:** Describe the experimental design and the main empirical result together.
 
 **Visual:** Four-box progression: OptGNN → OptGNN-IR → OptGNN-Logit → OptGNN-Logit+Clause.
-Each box labeled with its modification.
+Below: bar chart showing exact solving rate for each variant vs. approximation ratio
+(approximation stays high for all; solving jumps sharply only for the last variant).
 
 **Slide text:**
 ```
-Starting point: OptGNN (SDP-based, continuous loss)
+Three modifications to OptGNN:
 
-Modification 1 — Recurrent layers (OptGNN-IR):
-  Replace stacked layers with one recurrent unit run for more steps.
-  Analogy: running a local-search heuristic longer.
+1. Recurrent layers (OptGNN-IR):
+   Single recurrent unit, more iterations. Analogy: run longer.
 
-Modification 2 — Logit-space loss (OptGNN-Logit):
-  Add rounding layer: embeddings → [0,1] → clause validity.
-  Loss directly evaluates discrete clause satisfaction.
+2. Logit-space loss (OptGNN-Logit):
+   Add rounding layer: embeddings → [0,1] → clause validity.
+   Loss directly evaluates discrete clause satisfaction.
 
-Modification 3 — Clause-level aggregation (OptGNN-Logit+Clause):
-  Explicit variable–constraint bipartite structure in the architecture.
-  Factor-graph view built in.
-```
+3. Clause-level aggregation (OptGNN-Logit+Clause):
+   Explicit variable–constraint bipartite structure built in.
 
-**Speaker note:** "Each modification is inspired by classical heuristic design, not arbitrary
-architecture search. We want to understand which ingredient is responsible for the transition to
-solving. The answer connects back to everything in Chapters 2 and 3."
-
----
-
-#### Slide 36 — The transition is sharp, not gradual
-
-**Purpose:** The main empirical finding of Chapter 4.
-
-**Visual:** Bar chart (schematic). X-axis: the four variants. Y-axis: fraction of instances exactly
-solved. OptGNN and OptGNN-IR near zero; OptGNN-Logit moderate; OptGNN-Logit+Clause
-high. Approximation ratio (~99%) stays high for all variants — shown as a flat top line.
-
-**Slide text:**
-```
 All four variants: approximation ratio ≈ 99%+
-(strong approximation is easy; all models achieve it)
-
-Exact solving (100% satisfied):
-  OptGNN:                 ≈ 0%
-  OptGNN-IR:              ≈ 0%
-  OptGNN-Logit:           moderate
-  OptGNN-Logit+Clause:    strong
+Solving (100% satisfied):   OptGNN ≈ 0%,  OptGNN-IR ≈ 0%,
+                             OptGNN-Logit: moderate,
+                             OptGNN-Logit+Clause: strong.
 
 More iterations alone do not bridge the gap.
-The transition requires a qualitative architectural change.
 ```
 
-[VERIFY exact numbers from paper before slide generation]
+[VERIFY exact solving-rate numbers from the paper before slide generation]
 
-**Speaker note:** "The striking observation is that you can run OptGNN longer — it still fails to
-solve. The transition requires a qualitative architectural change, not just more compute. When the
-transition happens, it's sharp. Models go from almost never solving to consistently solving.
-There is no gradual middle ground."
+**Speaker note:** "The striking observation is that running OptGNN longer — more iterations —
+does not help. The model still fails to solve. The transition requires a qualitative architectural
+change. And when the transition happens, it's sharp. Models go from almost never solving to
+consistently solving. There is no gradual middle ground."
 
 ---
 
-#### Slide 37 — Why the transition happens: confidence returns
+#### Slide 40 — Confidence returns: the concept that bridges approximation and solving
 
 **Purpose:** Connect Chapter 4 back to the concept thread from Chapters 2 and 3.
 
-**Visual:** Two panels side by side. Left: solving rate per model variant. Right: linear probe
-accuracy for predicting support from embeddings, per variant. The two curves mirror each other.
+**Visual:** Two panels side by side.
+- Left: solving rate per model variant (bar chart, schematic).
+- Right: linear probe accuracy for predicting support from embeddings, per variant.
+Both curves are mirror images.
 
 **Slide text:**
 ```
-We probe each model variant: can support be decoded from embeddings?
+We probe each variant: can support be decoded from embeddings?
 
 OptGNN:                support not decodable  →  does not solve
 OptGNN-IR:             support not decodable  →  does not solve
 OptGNN-Logit:          support partially decodable  →  sometimes solves
 OptGNN-Logit+Clause:   support strongly decodable   →  consistently solves
 
-The presence of the confidence concept predicts the solving capability.
+The presence of the confidence signal predicts the solving capability.
+Why? The logit loss exposes TFF-type clauses (barely-satisfied, one literal keeping
+     them alive) — exactly the support clauses. The SDP loss mixes this signal
+     with high-dimensional geometry and obscures it.
 ```
 
-**Speaker note:** "The probe results mirror the solving results perfectly. The presence of the
-confidence signal — specifically the support concept — is what distinguishes approximators from
-solvers. This is not just correlation: the logit-space loss exposes a TFF-type clause pattern that
-directly identifies support variables, and clause-level aggregation gives the model the structure
-to compute support globally."
+**Speaker note:** "The probe results mirror the solving results perfectly. Support is the concept
+that bridges approximation and solving. When the architecture gives the model the right structure
+to form that concept — clause-level aggregation makes support locally computable — it solves.
+When it can only approximate, it lacks that structure. The concept predicts the capability."
 
 ---
 
-#### Slide 38 — Why the logit loss exposes confidence
+#### Slide 41 — Evidence status: what we've proven vs. what we've observed
 
-**Purpose:** Give the theoretical intuition for why the logit modification matters.
+**Purpose:** A precise audit of the evidence for each claim, per problem. Required for this
+audience.
 
-**Visual:** Table of SAT clause types and their behavior under near-discrete assignments.
+**Visual:** A table with five rows and four columns.
 
 **Slide text:**
 ```
-Clause types under near-discrete assignment:
-  TTT: fully satisfied      → minimal loss, no signal
-  TTF: safely satisfied     → low loss
-  TFF: barely satisfied     → loss near violation threshold
-  FFF: unsatisfied          → large loss (correction signal)
-
-TFF clauses give a confidence signal:
-  "This variable is the only one keeping this clause satisfied."
-  → That's support, exactly.
-
-SDP loss: mixes this signal with high-dimensional inner products → noisy.
-Logit loss: learns a single rounding direction → isolates the signal.
+Problem          Classical concept      GNN evidence                  Status
+─────────────────────────────────────────────────────────────────────────────────
+SAT (NeuroSAT)   Support (literal)      PCA + linear probe +          Formal + empirical
+                                        theoretical analysis
+Graph            Support (vertex/       Embedding geometry +          Empirical /
+Coloring         color class)           linear probe                  partially formal
+Max-Clique /     Degree-based           PCA + score correlation +     Empirical +
+Sparse PCA       row-sum ranking        cross-domain transfer         algorithmic result
+OptGNN           Support / confidence   Ablations + linear probes     Empirical
+                                        across model variants
 ```
 
-**Speaker note:** "The logit loss, by forcing embeddings through a rounding step before evaluating
-clause satisfaction, separates TFF-type clauses from others. TFF clauses are the support clauses.
-The model can now identify them clearly, rather than having their signal washed out by the
-high-dimensional geometry of the SDP objective. This is why the modification matters."
+**Speaker note:** "I want to be precise about what is proven versus what is observed. The
+strongest result is for SAT: we have a theoretical analysis, an empirical probe, and a PCA
+structure argument. For coloring and clique, we have strong empirical evidence but the formal
+theory is less complete. For the OptGNN chapter, the evidence is from ablations and probes —
+no formal theory yet. These are the right distinctions to make, and they point to what remains
+open."
 
 ---
 
-#### Slide 39 — The unified picture
+#### Slide 42 — Chapter 4 + unified running question: final answer
 
-**Purpose:** Synthesize all four chapters into one coherent message.
+**Purpose:** Close Chapter 4 and deliver the unified answer to the running question.
 
-**Visual:** Table with four rows (one per problem/chapter) and three columns: Problem / Concept
-found / Classical origin.
+**Visual:** Running question with all four chapter answers now filled in.
 
 **Slide text:**
 ```
-Problem               Concept found             Classical origin
-─────────────────────────────────────────────────────────────────────
-SAT (NeuroSAT)        Support (variable)        WalkSAT, Survey Prop.
-Graph Coloring        Support (vertex/color)    Alon–Kahale (1994)
-Max-Clique / PCA      Degree-based ranking      Planted clique theory
-SDP / OptGNN          Support (again)           Classical solver design
+Running question: What did the GNN actually learn?
 
-In all cases:
-  GNN success is explainable by a classical algorithmic concept.
-  The concept appears in embeddings without explicit supervision.
-  Its presence predicts both interpretability and capability.
+Chapter 1: A transferable message-passing rule — but which one?
+Chapter 2: In SAT/Coloring → support (classical confidence signal)
+Chapter 3: In Clique/Sparse PCA → degree ranking (classical planted-graph signal)
+Chapter 4: In SDP/OptGNN → whether support/confidence forms
+           determines whether the model solves or only approximates
+
+Unified answer:
+  GNNs for combinatorial optimization tend to learn classical algorithmic concepts.
+  Not new primitives. Not mysterious black-box reasoning.
+  Concepts that classical theory and classical algorithms identified decades ago.
+
+  This makes them: analyzable, compressible, and designable.
 ```
 
-**Speaker note:** "Four problems, four papers, same conclusion. GNNs trained on combinatorial
-tasks do not invent new algorithmic primitives. They discover classical ones. This tells us what
-to look for, how to design better architectures, when to expect GNNs to work, and why. It gives
-a vocabulary for reasoning about learned combinatorial algorithms."
+**Speaker note:** "Four chapters, four problems, one answer. GNNs don't invent new algorithmic
+primitives. They discover classical ones — support, degree, confidence — through high-dimensional
+message passing. That's not a negative result. It's a useful one. It tells us what to look for, how
+to design better architectures, and how to trust or improve these models."
 
 ---
 
-#### Slide 40 — What GNNs learn — and what we can do with it
+#### Slide 43 — What we can do with this
 
-**Purpose:** Payoff slide. Connect the conceptual findings to concrete outcomes.
+**Purpose:** Concrete payoffs from the concept-learning framework.
 
 **Visual:** Three clean takeaway boxes.
 
@@ -1171,56 +1399,62 @@ a vocabulary for reasoning about learned combinatorial algorithms."
 ```
 Finding 1 — Interpretability:
   GNNs for combinatorial optimization encode classical algorithmic concepts.
-  (support, degree, ranking — decodable by linear probes)
+  Support, degree, ranking — decodable by linear probes.
 
-Finding 2 — Compression and design:
-  Once you know the concept, you can train toward it directly.
-  91% compression in SAT. Faster WalkSAT variant.
+Finding 2 — Compression and algorithmic improvement:
+  Once you know the concept, train toward it directly.
+  91% compression (StudentNeuroSAT).
+  Faster WalkSAT variant (SupportSAT-01).
+  New combinatorial algorithm for Sparse PCA (Max-Clique GNN + LPR).
 
-Finding 3 — A design principle for neural solvers:
+Finding 3 — Design principle for neural solvers:
   Approximation ≠ solving.
-  Architectures should explicitly support the emergence of confidence signals.
+  Architectures should explicitly support confidence signal formation.
   Clause-level aggregation enables this in the SDP/OptGNN setting.
 ```
 
-**Speaker note:** "Three things you can use. First: if you're trying to understand a GNN for a
-combinatorial task, look for classical algorithmic quantities in the embeddings — that's a productive
-first hypothesis. Second: you can compress, improve, and analyze GNNs once you identify the
-concept. Third: for designing future neural solvers, we now have a concept-level criterion — does
-your architecture support the formation of confidence? If not, it will approximate but not solve."
+**Speaker note:** "Three things you can use. First: when you see a GNN for a combinatorial
+task, look for classical algorithmic quantities in the embeddings — that's a productive first
+hypothesis. Second: interpretability leads directly to compression and improvement. Third: for
+designing future neural solvers, we now have a concept-level criterion. Does your architecture
+support the formation of confidence? If not, it will approximate but not solve."
 
 ---
 
-#### Slide 41 — Open questions
+#### Slide 44 — Open questions
 
-**Purpose:** Invite the audience into the research. Especially good for a summer school.
+**Purpose:** Invite the audience into the research. Appropriate for a summer school.
 
 **Slide text:**
 ```
-1. Are there problems where GNNs learn a genuinely new concept —
-   one not previously identified in classical algorithmic literature?
+1. Are there combinatorial problems where GNNs learn a genuinely new concept —
+   one not previously identified in the classical algorithmic literature?
 
 2. Can concept-level probing predict generalization failure before it occurs?
+   (Early warning from the embeddings, not from test performance)
 
-3. What is the right theory of when confidence is locally computable?
-   (In SAT: support is local. Is this always true for problems where GNNs work?)
+3. When is confidence locally computable?
+   In SAT: support is local — each variable sees its clauses.
+   Is this always true for problems where GNNs work?
+   Is local computability a necessary condition for GNN success?
 
 4. Can we design loss functions that provably induce confidence formation?
+   (Rather than discovering it empirically after the fact)
 
 5. Is there an approximation–solving gap analogue for other problem classes?
-   (coloring near the threshold, independent set, max-independent-set, ...)
+   (Coloring near the threshold, independent set, constraint propagation, ...)
 ```
 
-**Speaker note:** "These are open questions we're actively working on. If any of them resonate
-with your own work — I'd be happy to talk after."
+**Speaker note:** "These are questions we're working on or would like to work on. If they
+connect to your own interests — I'd be happy to talk after."
 
 ---
 
-#### Slide 42 — Takeaway
+#### Slide 45 — Takeaway
 
 **Purpose:** Final slide. One sentence the audience leaves with.
 
-**Visual:** Clean, minimal. Single centered statement.
+**Visual:** Clean, minimal. Single statement centered.
 
 **Slide text:**
 ```
@@ -1243,27 +1477,28 @@ to classical algorithmic theory. Questions?"
 ### Backup Slides *(after \appendix)*
 
 **B1 — NeuroSAT architecture details**
-NeuroSAT factor graph encoding, LSTM update equations (Eq. 1 from Dan's concept learning
-paper), FLIP operator, readout via Lvote MLP.
+Factor graph encoding, LSTM update equations (Eq. 1 from the concept learning paper), the FLIP
+operator, readout via L_vote MLP. For an audience member who wants to understand the exact model.
 
 **B2 — Support-core: formal construction**
-r-support core definition, analogy to graph r-core, conditions under which core coincides with
-backbone variables, proof sketch of dynamics theorem.
+r-support core definition, analogy to graph r-core, conditions under which the core coincides with
+backbone variables. Informal proof sketch of the dynamics theorem. For theory-oriented questions.
 
-**B3 — Planted clique hardness landscape**
-Detailed parameter table for n = 500 and n = 1000. Easy/Medium/Hard boundaries. Known
-algorithmic results at each threshold (Kucera, AKS, Feige–Ron).
+**B3 — Planted clique hardness landscape: full details**
+Regime boundaries for n = 500 and n = 1000. Known algorithmic results at each threshold:
+Kucera (Easy), AKS / Feige–Grinberg (Medium), planted clique hardness conjecture (Hard).
 
 **B4 — LPR algorithm: pseudocode and complexity**
-O(n³) analysis, runtime table from AAAI 2026 paper (avg 25s, peak 90s for n = 47k).
+O(n³) analysis. Runtime table from AAAI 2026 paper (avg ~25s, peak ~90s for n = 47k).
+Comparison with naive O(n²) Top-k on the full benchmark.
 
-**B5 — OptGNN-Logit: the rounding layer**
-Architecture diagram, logit-space loss derivation, TFF-type clause ordering, formal Insight 1
-and Insight 2 from the NeurIPS 2026 submission.
+**B5 — OptGNN-Logit: the rounding layer and why it exposes support**
+Architecture diagram. Logit-space loss derivation. TFF clause ordering argument. Formal
+statement of Insights 1 and 2 from "The Last Percent" paper.
 
 **B6 — Sparse PCA: formal connection to Max-Clique**
-Covariance matrix setup (Σ = I + βvv⊤), difficulty regimes for Sparse PCA, Covariance
-Thresholding comparison, statement of the new algorithmic result.
+Covariance matrix setup (Σ = I + βvv⊤), easy/medium/hard difficulty regimes for Sparse PCA,
+Covariance Thresholding comparison, precise statement of the new algorithmic result.
 
 ---
 
@@ -1271,37 +1506,34 @@ Thresholding comparison, statement of the new algorithmic result.
 
 ### Critical — needed before generating Beamer
 
-| Item | Reason |
-|------|--------|
-| Confirm `OptGNN_elad_s` is your paper and can be presented publicly | Submitted to NeurIPS 2026 as anonymous. Need to decide how to attribute in a public talk before slides go to ADYN. |
-| Exact solving-rate numbers from "The Last Percent" | Slides 36–37 use qualitative descriptions. Replace with actual values before presenting. |
-| Confirm LPR runtime numbers | Slide 30 cites "avg. ~25s, peak ~90s for n = 47k" from AAAI 2026 paper. Verify this is the number you want on the slide. |
-| Original NeuroSAT paper (Selsam et al., ICLR 2019) | Not in `GNNs/background/`. Training range n ∈ [10, 40] is confirmed from your concept learning paper (Table 1), but verify the generalization range stated in Selsam's paper directly before citing it. |
+| Item | Why |
+|------|-----|
+| Confirm `OptGNN_elad_s` is your paper and attribution for public presentation | Submitted to NeurIPS 2026 as anonymous. Decide how to attribute before any public slides. |
+| Exact solving-rate numbers from "The Last Percent" | Slides 39–40 use qualitative descriptions. Replace with the actual values. |
+| Verify exact NeuroSAT test range from Selsam et al. (2019) | Slide 2 and Slide 17 use "[VERIFY from Selsam paper]" placeholders. The number n = 2000 appears in your concept learning paper as a test set size; check whether Selsam's original paper claims a specific generalization range. |
 | Preferred Beamer template | `config.py` defaults to `Madrid`. Confirm or provide a `.sty` file. |
 
 ### Important — affects slide accuracy
 
-| Item | Reason |
-|------|--------|
-| Figures from the SAT concept learning paper you want reused | Figs. 2 and 7 (PCA plots, support encoding) are strong visuals. TikZ source or vector source needed for Beamer. |
-| Figure 1 from the graph coloring paper | Triangular PCA embedding diagram is the clearest illustration of the coloring concept. TikZ or vector source needed. |
-| Exact probe accuracy numbers for Chapter 4 | Slide 37 uses a schematic. Replace with the actual bar chart values from the paper. |
-| Sparse PCA claim framing | Slide 31 states "first combinatorial algorithm matching Covariance Thresholding, no hyperparameters." Confirm this is exactly how it is stated in the AAAI 2026 paper. |
+| Item | Why |
+|------|-----|
+| Figures from the SAT concept learning paper (Figs. 2, 7) | TikZ or vector source needed for PCA plots in Beamer. PDFs cannot be directly reused cleanly. |
+| Figure 1 from the graph coloring paper | Triangular PCA embedding diagram. TikZ or vector source. |
+| Exact probe accuracy numbers for Chapter 4 | Slides 39–40 use schematics. Replace with actual bar chart values. |
+| Sparse PCA claim wording | Slide 34 says "first combinatorial algorithm matching Covariance Thresholding." Verify this exact claim is in the AAAI 2026 paper as submitted. |
 
 ### Optional but improves the talk
 
 | Item | Notes |
 |------|-------|
-| WalkSAT vs. SupportSAT-01 convergence plot | Fig. 3 in the SAT paper. Clear and compelling for Slide 22. |
-| Existing slides from the Weizmann PPTX | `GNNs/my papers/ReverseAlg50Weizmann.pptx` — check for reusable diagrams, especially the GNN/BP comparison sequence. |
-| Target audience calibration | Confirm whether any ADYN attendees have ML backgrounds. This affects how much time to spend on Slides 4–13. |
-| Abstract deadline for the ADYN website | The event page lists the title as TBA. If there's a deadline for submitting title/abstract, note it. |
+| WalkSAT vs. SupportSAT-01 convergence plot | Fig. 3 in the SAT paper. Strong visual for Slide 25. |
+| Weizmann PPTX | `GNNs/my papers/ReverseAlg50Weizmann.pptx` — check for reusable diagrams, especially GNN/BP comparison sequences. |
+| ADYN abstract deadline | Event page lists title as TBA. Note any deadline for submitting the abstract to the organizers. |
+| Audience calibration | Confirm whether any attendees have ML backgrounds — affects how much time to spend on Slides 4–18. |
 
 ---
 
-## Notes for Beamer Generation
-
-Once you approve this outline and resolve the items above, generate the Beamer deck using:
+## Beamer generation command (once plan is approved)
 
 ```bash
 python agent.py \
@@ -1311,15 +1543,15 @@ python agent.py \
   --compile
 ```
 
-Or generate an outline draft first for quick review:
+Or generate an outline draft first:
 
 ```bash
 python agent.py --outline-only --title "Learned Algorithms or Classical Messages in Disguise?"
 ```
 
-Key parameters to set in `config.py` before generating:
+Key settings to confirm in `config.py` before running:
 - `TALK_TITLE` — set to chosen title variant
 - `AUDIENCE` — "PhD students and postdocs in algorithms, combinatorics, TCS"
 - `TALK_DURATION_MINUTES` — 50
-- `TARGET_SLIDE_COUNT` — 42
+- `TARGET_SLIDE_COUNT` — 45
 - `BEAMER_THEME` — confirm preference
