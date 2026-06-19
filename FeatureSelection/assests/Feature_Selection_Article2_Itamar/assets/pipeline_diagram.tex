@@ -1,0 +1,122 @@
+%% Feature-Selection Evaluation Pipeline — TikZ figure
+%% Requires in preamble (after \usepackage{tikz}):
+%%   \usetikzlibrary{arrows.meta,fit,backgrounds,positioning}
+
+\begin{figure}[tbp]
+\centering
+\resizebox{0.98\linewidth}{!}{%
+\begin{tikzpicture}[
+  N/.style={
+    draw, rounded corners=5pt, align=center,
+    font=\large\sffamily, inner xsep=8pt, inner ysep=6pt,
+    minimum height=1.0cm, line width=0.65pt},
+  Nblue/.style  ={N, fill=blue!12,   draw=blue!45!black},
+  Nteal/.style  ={N, fill=teal!12,   draw=teal!55!black},
+  Ngreen/.style ={N, fill=green!12,  draw=green!50!black},
+  Norange/.style={N, fill=orange!14, draw=orange!55!black},
+  Npurple/.style={N, fill=violet!11, draw=violet!50!black},
+  Ngray/.style  ={N, fill=gray!9,    draw=gray!50!black},
+  Etag/.style={
+    draw=teal!55!black, fill=teal!16, rounded corners=3pt, align=center,
+    font=\large\sffamily\bfseries,
+    inner xsep=5pt, inner ysep=4pt, line width=0.55pt},
+  Mtag/.style={
+    draw=orange!55!black, fill=orange!18, rounded corners=3pt, align=center,
+    font=\large\sffamily\bfseries,
+    inner xsep=5pt, inner ysep=4pt, line width=0.55pt},
+  arr/.style={
+    ->, >={Stealth[length=5pt,width=3.5pt]},
+    draw=gray!60!black, line width=0.7pt},
+  ann/.style={font=\large\sffamily, text=gray!65!black},
+  phd/.style={font=\large\sffamily\itshape, text=gray!60!black},
+]
+
+%% ROW 1
+\node[Nblue, minimum width=2.2cm] (D)
+  {\textbf{Datasets}\\[2pt]102 real-world};
+
+\node[Ngray, minimum width=2.6cm, right=0.7cm of D] (HS)
+  {\textbf{Hardness}\\[-1pt]Stratification};
+
+\node[Etag, below left=0.65cm and 0.25cm of HS]  (easy)
+  {Easy\\[-1pt]$n=88$};
+\node[Mtag, below right=0.65cm and 0.25cm of HS] (med)
+  {Medium\\[-1pt]$n=14$};
+
+%% ROW 2
+\node[Nteal, minimum width=2.6cm, below=3.6cm of HS] (FS)
+  {\textbf{Feature Selection}\\[1pt]train folds only};
+
+\node[Nteal, minimum width=2.9cm, right=0.7cm of FS] (KHP)
+  {\textbf{$K$ \& Hyperparameter}\\[-1pt]Selection};
+
+\node[Nteal, minimum width=3.0cm, right=0.7cm of KHP] (CLF)
+  {\textbf{Classifiers}\\[1pt]LR,\;SVM,\;RF,\;ET,\;XGBoost};
+
+\node[Ngreen, minimum width=2.8cm, below=0.9cm of CLF] (EVAL)
+  {\textbf{Evaluation}\\[1pt]AUC,\quad 5-CV Std};
+
+%% LOWER PART
+\node[Norange, minimum width=3.0cm, below=0.8cm of EVAL] (AGG)
+  {\textbf{Aggregation}\\[3pt]
+   \textit{All}~setting \quad \textit{Best}~setting};
+
+\node[Npurple, minimum width=3.4cm,
+      font=\large\sffamily, align=left,
+      left=1.4cm of AGG] (RES)
+  {\textbf{Resource Analysis}\\[5pt]
+   $\bullet$\enspace Runtime\\[3pt]
+   $\bullet$\enspace Algorithm Family\\[3pt]
+   $\bullet$\enspace Supervision\\[3pt]
+   $\bullet$\enspace Implementation\\[3pt]
+   $\bullet$\enspace Optimization Effort};
+
+\node[draw=gray!30, rounded corners=4pt, fill=gray!5, line width=0.55pt,
+      font=\large\sffamily, align=center, inner sep=6pt,
+      minimum width=3.0cm, left=1.1cm of RES] (STAT)
+  {\textit{Statistical Analysis:}\\[3pt]
+   Paired Wilcoxon\\[-1pt]Signed-Rank\\
+   Win-rate\\
+   Cliff's~$\delta$};
+
+%% ARROWS
+\draw[arr] (D) -- (HS);
+\draw[arr] (HS.south) -- (FS.north);
+\draw[arr, teal!55!black]   (HS.south) to[out=240,in=80]  (easy.north);
+\draw[arr, orange!60!black] (HS.south) to[out=300,in=100] (med.north);
+\draw[arr] (FS)  -- (KHP);
+\draw[arr] (KHP) -- (CLF);
+\draw[arr] (CLF.south) -- (EVAL.north);
+\draw[arr] (EVAL.south) -- (AGG.north);
+\draw[arr] (AGG.west) -- (RES.east);
+\draw[arr, dashed, gray!45] (RES.west) -- (STAT.east);
+
+%% GROUP BOX
+\begin{scope}[on background layer]
+  \node[
+    draw=teal!28, dashed, rounded corners=10pt,
+    line width=0.7pt, fill=teal!3, inner sep=12pt,
+    fit=(FS)(KHP)(CLF)(EVAL)
+  ] (cvbox) {};
+\end{scope}
+\node[phd, above=5pt of cvbox.north]
+  {Evaluation Pipeline (5-fold cross-validation)};
+
+\end{tikzpicture}%
+}
+\caption{Evaluation pipeline for resource-aware feature selection.
+A total of 102 real-world datasets are stratified by hardness
+\citep{elmakias2025choosing} into {Easy} ($n=88$) and
+{Medium} ($n=14$) groups.
+Within stratified 5-fold cross-validation, feature selection,
+including the choice of $K$ and hyperparameters, is performed
+exclusively on training folds to prevent leakage.
+Selected features are evaluated using five classifiers
+(LR, SVM, RF, ET, XGBoost), with performance measured by AUC
+and cross-validation variability.
+Results are aggregated under two regimes—\emph{All} (all configurations)
+and \emph{Best} (per-dataset optimal configuration)—and analyzed
+across five resource dimensions using paired Wilcoxon tests,
+win rates, and Cliff's~$\delta$.}
+\label{fig:fs_pipeline}
+\end{figure}

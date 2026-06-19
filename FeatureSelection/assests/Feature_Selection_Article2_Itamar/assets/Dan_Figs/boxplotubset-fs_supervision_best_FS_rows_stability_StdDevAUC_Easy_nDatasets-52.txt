@@ -1,0 +1,20 @@
+Figure file: boxplotubset-fs_supervision_best_FS_rows_stability_StdDevAUC_Easy_nDatasets-52.jpg
+On-figure title: Easy (52 datasets)
+
+Stability with BEST selection: per dataset × side, keep the FS row with maximum mean CV AUC; plotted value is that row's Std_dev AUC. No-FS rows excluded. Article 2 ``df_work`` scope as above.
+Box lines: median; IQR; whiskers = Tukey whis=1.5.
+
+Medians and sample sizes (n = number of Std_dev AUC (5-CV) values per box):
+  - Supervised: median (Std_dev AUC (5-CV)) = 0.006000, n=52
+  - Unsupervised: median (Std_dev AUC (5-CV)) = 0.011500, n=50
+
+Whiskers: matplotlib Tukey style with whis=1.5×IQR fences; caps at extreme data inside fences.
+Whisker endpoints (lower cap, upper cap):
+  - Supervised: 0.000000, 0.039000
+  - Unsupervised: 0.000000, 0.069000
+
+Reference P5 / P95 (do not define whiskers):
+  - Supervised: P5 = 0.000000, P95 = 0.046350
+  - Unsupervised: P5 = 0.000450, P95 = 0.060450
+
+FS row counts after BEST selection: Supervised (Y) = 52, Unsupervised (N) = 50.

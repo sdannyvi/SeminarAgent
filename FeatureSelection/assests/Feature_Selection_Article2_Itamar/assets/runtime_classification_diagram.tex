@@ -1,0 +1,175 @@
+%% Feature-Selection Evaluation Pipeline — TikZ figure
+%% Requires in preamble (after \usepackage{tikz}):
+%%   \usetikzlibrary{arrows.meta,fit,backgrounds,positioning}
+
+\begin{figure}[tbp]
+\centering
+\resizebox{0.92\linewidth}{!}{%
+\begin{tikzpicture}[
+  %─── Base box style ────────────────────────────────────────────────────────
+  N/.style={
+    draw, rounded corners=5pt, align=center,
+    font=\small\sffamily, inner xsep=8pt, inner ysep=6pt,
+    minimum height=1.0cm, line width=0.65pt},
+  %─── Colour variants ───────────────────────────────────────────────────────
+  Nblue/.style  ={N, fill=blue!12,   draw=blue!45!black},
+  Nteal/.style  ={N, fill=teal!12,   draw=teal!55!black},
+  Ngreen/.style ={N, fill=green!12,  draw=green!50!black},
+  Norange/.style={N, fill=orange!14, draw=orange!55!black},
+  Npurple/.style={N, fill=violet!11, draw=violet!50!black},
+  Ngray/.style  ={N, fill=gray!9,    draw=gray!50!black},
+  %─── Hardness tags ─────────────────────────────────────────────────────────
+  Etag/.style={
+    draw=teal!55!black, fill=teal!16, rounded corners=3pt, align=center,
+    font=\scriptsize\sffamily\bfseries,
+    inner xsep=5pt, inner ysep=4pt, line width=0.55pt},
+  Mtag/.style={
+    draw=orange!55!black, fill=orange!18, rounded corners=3pt, align=center,
+    font=\scriptsize\sffamily\bfseries,
+    inner xsep=5pt, inner ysep=4pt, line width=0.55pt},
+  %─── Arrows  (brace around tip spec fixes pgfkeys parsing) ─────────────────
+  arr/.style={
+    ->, >={Stealth[length=5pt,width=3.5pt]},
+    draw=gray!60!black, line width=0.7pt},
+  %─── Text labels ───────────────────────────────────────────────────────────
+  ann/.style={font=\scriptsize\sffamily, text=gray!65!black},
+  phd/.style={font=\footnotesize\sffamily\itshape, text=gray!60!black},
+]
+
+%%────────────────────────────────────────────────────────────────────────────
+%% ROW 1 — Input pipeline  (left → right)
+%%────────────────────────────────────────────────────────────────────────────
+\node[Nblue, minimum width=2.2cm] (D)
+  {\textbf{Datasets}\\[2pt]\scriptsize 102 real-world};
+
+\node[Ngray, minimum width=2.6cm, right=0.7cm of D] (HS)
+  {\textbf{Hardness}\\[-1pt]Stratification};
+
+%% Invisible fork node — replaces the 5-Fold CV box; label lives on the arrow
+\node[inner sep=0, outer sep=0, minimum size=0pt, right=5.5cm of HS] (CVfork) {};
+
+%% Hardness-category tags hang below HS
+\node[Etag, below left=0.65cm and 0.25cm of HS]  (easy)
+  {Easy\\[-1pt]\tiny $n=88$};
+\node[Mtag, below right=0.65cm and 0.25cm of HS] (med)
+  {Medium\\[-1pt]\tiny $n=14$};
+
+%%────────────────────────────────────────────────────────────────────────────
+%% ROW 2 — CV evaluation pipeline
+%%   FS / KHP / CLF placed below HS; EVAL hangs below CLF (inside evaluation group box)
+%%────────────────────────────────────────────────────────────────────────────
+\node[Nteal, minimum width=2.6cm, below=3.6cm of HS] (FS)
+  {\textbf{Feature Selection}\\[1pt]\scriptsize train folds only};
+
+\node[Nteal, minimum width=2.9cm, right=0.7cm of FS] (KHP)
+  {\textbf{$K$ \& Hyperparameter}\\[-1pt]Selection};
+
+\node[Nteal, minimum width=3.0cm, right=0.7cm of KHP] (CLF)
+  {\textbf{Classifiers}\\[1pt]\scriptsize LR,\;SVM,\;RF,\;ET,\;XGBoost};
+
+\node[Ngreen, minimum width=2.8cm, below=1.4cm of CLF] (EVAL)
+  {\textbf{Evaluation}\\[1pt]\scriptsize AUC,\quad 5-CV Std};
+
+%%────────────────────────────────────────────────────────────────────────────
+%% ROW 3 — Aggregation + Resource Analysis
+%%   AGG is placed below EVAL; RES is to the left of AGG; STAT below RES
+%%────────────────────────────────────────────────────────────────────────────
+\node[Norange, minimum width=3.0cm, below=1.4cm of EVAL] (AGG)
+  {\textbf{Aggregation}\\[3pt]\scriptsize
+   \textit{All}~setting \quad \textit{Best}~setting};
+
+\node[Npurple, minimum width=3.2cm, minimum height=4.4cm,
+      font=\footnotesize\sffamily, align=left,
+      left=0.8cm of AGG] (RES)
+  {\textbf{Resource Analysis}\\[5pt]
+   $\bullet$\enspace Runtime\\[3pt]
+   $\bullet$\enspace Algorithm Family\\[3pt]
+   $\bullet$\enspace Supervision\\[3pt]
+   $\bullet$\enspace Implementation\\[3pt]
+   $\bullet$\enspace Optimization Effort};
+
+\node[draw=gray!30, rounded corners=4pt, fill=gray!5, line width=0.55pt,
+      font=\scriptsize\sffamily, align=center, inner sep=6pt,
+      minimum width=3.0cm, below=0.9cm of RES] (STAT)
+  {\textit{Statistical Analysis:}\\[3pt]
+   Paired Wilcoxon\\[-1pt]Signed-Rank\\
+   Win-rate\\
+   Cliff's~$\delta$};
+
+%%────────────────────────────────────────────────────────────────────────────
+%% ARROWS
+%%────────────────────────────────────────────────────────────────────────────
+
+%% Row 1 spine — "5-Fold Cross-Validation" lives as a highlighted label on the arrow
+\draw[arr] (D) -- (HS);
+\draw[arr] (HS.east) -- (CVfork)
+  node[midway, above=4pt,
+       fill=teal!15, draw=teal!50!black, rounded corners=3pt,
+       font=\small\sffamily\bfseries, inner xsep=6pt, inner ysep=3pt,
+       line width=0.55pt]
+  {\textbf{5-Fold Cross-Validation}};
+
+%% Hardness fan
+\draw[arr, teal!55!black]   (HS.south) to[out=240,in=80]  (easy.north);
+\draw[arr, orange!60!black] (HS.south) to[out=300,in=100] (med.north);
+
+%% fork → FS  (training folds: sweeps down-left to start of training arm)
+\draw[arr] (CVfork) to[out=270,in=0] (FS.east);
+
+%% Training chain
+\draw[arr] (FS)  -- (KHP);
+\draw[arr] (KHP) -- (CLF);
+
+%% CLF → EVAL  (straight down)
+\draw[arr] (CLF.south) -- (EVAL.north);
+
+%% fork → EVAL  (testing folds: exit fork right, bypass training arm, enter EVAL from right)
+\draw[arr] (CVfork) -- ++(1.9,0) |- (EVAL.east);
+
+%% EVAL → AGG  (straight down)
+\draw[arr] (EVAL.south) -- (AGG.north);
+
+%% AGG → RES  (horizontal left)
+\draw[arr] (AGG.west) -- (RES.east);
+
+%% RES → STAT  (dashed, straight down)
+\draw[arr, dashed, gray!45] (RES.south) -- (STAT.north);
+
+%%────────────────────────────────────────────────────────────────────────────
+%% PATH LABELS
+%%────────────────────────────────────────────────────────────────────────────
+\node[ann, above=4pt of FS, xshift=1.2cm]  {Training Folds};
+%% Testing-Folds label sits to the right of CLF, midway down the bypass path
+\node[ann, right=0.7cm of CLF, yshift= 0.6cm]    {Testing Folds};
+
+%%────────────────────────────────────────────────────────────────────────────
+%% GROUP BOX — CV Evaluation Pipeline  (background layer)
+%%────────────────────────────────────────────────────────────────────────────
+\begin{scope}[on background layer]
+  \node[
+    draw=teal!28, dashed, rounded corners=10pt,
+    line width=0.7pt, fill=teal!3, inner sep=12pt,
+    fit=(FS)(KHP)(CLF)(EVAL)
+  ] (cvbox) {};
+\end{scope}
+\node[phd, above=5pt of cvbox.north]
+  {Evaluation Pipeline \textemdash\ repeated over all 5 folds};
+
+\end{tikzpicture}%
+}
+\caption{Feature-selection evaluation pipeline.
+  The 102 real-world datasets are first partitioned by the hardness taxonomy of
+  \citet{elmakias2025choosing} into \textbf{Easy} ($n=88$) and
+  \textbf{Medium} ($n=14$) subsets.
+  Within a stratified 5-fold cross-validation framework, feature
+  selection is applied to training folds only; the number of selected
+  features $K$ and any algorithm hyperparameters are also chosen on
+  the training folds.
+  Five classifiers (LR, SVM, RF, ET, XGBoost) are trained and evaluated
+  on held-out test folds, with AUC and 5-fold standard deviation recorded.
+  Results are aggregated under two settings: \emph{All} (all configurations
+  pooled) and \emph{Best} (optimal configuration per dataset), then analyzed
+  across five resource dimensions using paired Wilcoxon signed-rank tests,
+  win-rates, and Cliff's~$\delta$.}
+\label{fig:fs_pipeline}
+\end{figure}

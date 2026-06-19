@@ -4,11 +4,11 @@
 
 This file defines how to help Dan prepare research-seminar presentations about his own work.
 
-These are not ordinary class lectures. They are research talks where the goal is to make the audience understand the problem, feel the gap, see the intuition, and only then appreciate the method and results.
+These are not ordinary class lectures. They are academic research talks where the goal is to make the audience understand the problem, see how the work is positioned relative to prior literature, feel the precise gap, understand the intuition, and only then appreciate the method and results.
 
-The default style should be closer to a strong VC-style pitch than to a dense academic lecture.
+The default style should be an academic seminar, not a sales pitch. The talk should be clear, motivated, and memorable, but it must avoid hype, slogans, overclaiming, and product-style language.
 
-The talk should build conviction.
+The talk should build scholarly credibility: clear positioning, precise claims, honest scope, and evidence that the speaker understands the current state of the field.
 
 ---
 
@@ -24,12 +24,15 @@ Instead, build the talk around the following logic:
 2. Why should anyone care?
 3. What is the current way people think about it?
 4. What is missing?
-5. What is the key insight?
-6. What do we contribute?
-7. How does the method work, intuitively?
-8. What toy example makes the idea obvious?
-9. What do the results show?
-10. Why does this matter?
+5. What has prior work already tried?
+6. Where exactly is our work different?
+7. What is the key insight?
+8. What do we contribute?
+9. How does the method work, intuitively?
+10. What toy example makes the idea clear?
+11. What do the results show?
+12. What do we not claim?
+13. Why does this matter?
 
 The talk should feel like a guided argument, not a compressed manuscript.
 
@@ -65,6 +68,68 @@ Good gap: "LLMs can retrieve many relevant archival sentences, but rare events m
 
 The audience should be able to repeat the gap in one sentence.
 
+### 3.5 Positioning Before Contribution
+
+Before introducing the contribution of each main part of the talk, include one or two positioning slides that answer:
+
+1. What is the current state of the art?
+2. What question has prior work already answered?
+3. What is the limitation of that answer?
+4. How is our question, unit of analysis, or evaluation protocol different?
+5. What does our work add beyond the existing view?
+
+This is mandatory for academic seminars. Do not jump from motivation directly to "our result" if there is prior work on the same question.
+
+Good positioning is not a long literature review. It is a compact map of the field that tells the audience why the new result is needed.
+
+For a multi-part talk, repeat this positioning step for each major question. Each chapter should have its own prequel:
+
+- Chapter question
+- Prior approach
+- Limitation of prior approach
+- Our shift in framing
+
+Examples:
+
+```text
+Question: Can we predict whether feature selection will help?
+
+Prior work:
+Meta-learning and studies such as POST predict FS utility or recommend FS methods
+from dataset descriptors.
+
+Limitation:
+Most formulations predict method-specific or dataset-classifier-specific gains,
+or assume FS will be performed and ask which method to use.
+
+Our shift:
+We ask a dataset-level gatekeeping question before running FS:
+is exhaustive FS search likely to yield a practically meaningful AUC gain?
+```
+
+```text
+Question: If we do FS, which methods should we use?
+
+Prior work:
+Algorithm-selection and meta-learning approaches often make per-dataset,
+single-point recommendations.
+
+Limitation:
+Per-dataset recommendations can be hard to summarize into stable guidance:
+different datasets get different recommendations, producing a blurred decision rule.
+
+Our shift:
+We compare resource categories across datasets and hardness regimes:
+runtime, implementation effort, supervision, method family, and tuning effort.
+```
+
+Never erase prior work by implying "nobody has done this." Prefer:
+
+- "Prior work studies X; we study Y."
+- "Prior work predicts at the method level; we ask a dataset-level gatekeeping question."
+- "Prior work gives per-dataset recommendations; we seek resource-level guidance."
+- "Prior work measures average performance; we stratify by dataset hardness."
+
 ### 4. Why the Obvious Solution Fails
 
 Before presenting our method, explain why naive approaches are insufficient. This creates tension.
@@ -99,6 +164,15 @@ Good: "We introduce an affective-profile view of sarcasm datasets, showing that 
 Good: "We benchmark 37 feature-selection methods across 102 datasets and show that expensive methods rarely justify their runtime on easy datasets."
 
 Good: "We evaluate LLMs on extremely rare altruistic behaviors in Holocaust testimonies and translate model performance into historian screening reduction."
+
+Keep contribution language academically modest. Avoid "the first ever" unless verified. Prefer "we formulate," "we evaluate," "we compare," "we provide evidence," and "we show in this benchmark."
+
+Always distinguish:
+
+- What the paper proves
+- What the experiments suggest
+- What is a conjecture or future direction
+- What is outside the scope
 
 ---
 
@@ -270,6 +344,10 @@ Never put an equation on a slide just because it appears in the paper.
 
 Do not create a long literature-review section. Use literature strategically to define the current paradigm, show what is missing, position our contribution, and reassure the audience that we know the field.
 
+For academic talks, literature is not optional when the topic has a known prior art. Include enough prior work for the audience to understand why the new work is not merely rediscovering an existing line.
+
+Each main contribution should have a positioning slide before its method/results. This slide should be concise, but it must name the relevant family of prior approaches and the point of departure.
+
 Example:
 
 ```text
@@ -281,6 +359,37 @@ What prior work gives us:
 What prior work does not explain:
 How motivation-experience fit shapes sustained outcomes.
 ```
+
+Feature-selection positioning examples:
+
+```text
+Prior work on FS utility:
+- POST and related studies ask whether feature selection improves downstream performance.
+- Meta-learning approaches use dataset descriptors to recommend feature selectors.
+
+Our distinction:
+- We use an oracle-style dataset-level utility definition.
+- We focus on practically meaningful gains over no-FS.
+- We frame the problem as rare-event/gatekeeper prediction before exhaustive FS search.
+```
+
+```text
+Prior work on choosing FS methods:
+- Surveys and benchmarks compare algorithms.
+- Meta-learning and algorithm selection produce per-dataset recommendations.
+
+Our distinction:
+- We compare resource categories, not only individual algorithms.
+- We ask whether higher runtime, implementation effort, supervision, or tuning effort
+  systematically improves performance.
+- We stratify the analysis by dataset hardness.
+```
+
+Avoid:
+
+- "Most papers skip this" unless backed by a specific characterization of prior work.
+- "Nobody has asked..." unless verified.
+- Presenting our work as a clean break when it is an extension, reframing, or change in unit of analysis.
 
 ---
 
@@ -314,7 +423,7 @@ Takeaway
 
 ## Slide Titles
 
-Use assertive slide titles. Each title should be a message, not a label.
+Use informative academic slide titles. Each title should be a claim or question, not a generic label, but it should remain precise and sober.
 
 Examples:
 
@@ -327,6 +436,22 @@ Examples:
 - "The right question is who benefits from which retreat"
 
 Avoid generic titles like Introduction, Background, Literature Review, Method, Results, and Discussion.
+
+Also avoid slogan titles that sound like marketing:
+
+- "Screen before you search"
+- "Start cheap"
+- "Complexity does not pay"
+- "Geometry is everything"
+- "Near-perfect prediction"
+
+Prefer:
+
+- "Dataset-level descriptors can predict FS utility"
+- "Substantial FS gains are rare under an oracle evaluation"
+- "Higher runtime does not yield systematic AUC gains in this benchmark"
+- "Intrinsic descriptors outperform provenance labels"
+- "Per-dataset recommendations do not directly yield resource-level guidance"
 
 ---
 
@@ -376,24 +501,51 @@ So why would we expect the same retreat experience to help everyone in the same 
 
 ---
 
-## VC-Pitch Style Adapted to Research
+## Academic Style
 
-Use the logic of a pitch, but keep academic credibility.
+Use clear argument structure, but keep the tone scholarly.
 
-Useful VC-style elements:
+Good academic style:
 
-- clear problem
-- clear pain point
-- why now
-- what is missing
-- simple insight
-- memorable framing
-- evidence of traction/results
-- crisp takeaway
+- Precise claims
+- Explicit scope
+- Clear relation to prior work
+- Honest baselines
+- Named limitations
+- Distinction between evidence, interpretation, and conjecture
+- Results stated with the relevant protocol and sample size
 
-Avoid startup hype: "revolutionize", "game-changing", "disruptive", "unprecedented".
+Avoid:
 
-Prefer: "This reframes the evaluation problem", "This suggests a more useful operating point", "This gives practitioners a decision rule", or "This exposes a mechanism that was previously treated as a black box."
+- Startup or sales language: "revolutionize", "game-changing", "disruptive", "breakthrough"
+- Product slogans: "screen before you search", "start cheap", "one decision flow"
+- Overconfident absolutes: "everyone assumes", "nobody has done", "always", "never"
+- Vague hype: "powerful", "massive", "dramatic", "near-perfect" without context
+- Dismissive language toward prior work
+
+Prefer:
+
+- "Under this protocol, we observe..."
+- "In this benchmark, we find..."
+- "This suggests..."
+- "This is consistent with..."
+- "We find no evidence that..."
+- "This differs from prior work in the unit of analysis..."
+- "The conclusion is limited by..."
+
+When a slide says something operational, keep it academic:
+
+Bad:
+"Start cheap and tune first."
+
+Better:
+"Begin with low-cost maintained methods and systematic tuning before evaluating higher-cost alternatives."
+
+Bad:
+"Screen before you search."
+
+Better:
+"Use dataset-level utility prediction before exhaustive FS evaluation."
 
 ---
 
@@ -403,11 +555,13 @@ When asked to prepare slides, first propose:
 
 1. The core message of the talk.
 2. The target audience assumption.
-3. The slide-level storyline.
-4. The key toy examples.
-5. The figures/illustrations needed.
-6. The results that must appear.
-7. The final takeaway.
+3. The positioning: what prior work already did, and how this work differs.
+4. The slide-level storyline.
+5. The key toy examples.
+6. The figures/illustrations needed.
+7. The results that must appear.
+8. The limitations and scope boundaries.
+9. The final takeaway.
 
 Then generate slide drafts.
 
@@ -518,6 +672,6 @@ and more on the fit between what participants seek and what the retreat enables.
 
 ## Default Standard
 
-When uncertain, make the presentation more concrete, visual, intuitive, example-driven, less text-heavy, less paper-like, and more focused on the gap and contribution.
+When uncertain, make the presentation more concrete, visual, intuitive, example-driven, less text-heavy, and more focused on the gap, positioning, and contribution.
 
-The audience should leave remembering the problem, the gap, the intuition, and the main result.
+The audience should leave remembering the problem, the prior-work baseline, the precise gap, the intuition, the main result, and the scope of the claim.

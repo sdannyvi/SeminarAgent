@@ -1,0 +1,51 @@
+Figure file: boxplotubset-fs_family_best_FS_rows_stability_StdDevAUC_Medium_nDatasets-11.jpg
+On-figure title: Medium (11 datasets)
+
+Stability plot with BEST selection: for each dataset × family, the FS row with the highest mean CV AUC is kept; the plotted value is that row's Std_dev AUC. No-FS: mean Std_dev AUC per dataset if duplicate rows. Article 2 ``df_work`` scope as above.
+Box lines: median; IQR; whiskers = Tukey whis=1.5.
+
+Medians and sample sizes (n = number of Std_dev AUC (5-CV) values per box):
+  - Embedded: median (Std_dev AUC (5-CV)) = 0.075000, n=11
+  - Ensemble: median (Std_dev AUC (5-CV)) = 0.074000, n=11
+  - Filter: median (Std_dev AUC (5-CV)) = 0.075000, n=11
+  - Hybrid: median (Std_dev AUC (5-CV)) = 0.067000, n=11
+  - Neural: median (Std_dev AUC (5-CV)) = 0.089000, n=11
+  - Wrapper: median (Std_dev AUC (5-CV)) = 0.087000, n=11
+  - No FS: median (Std_dev AUC (5-CV)) = 0.085500, n=11
+
+Whiskers: not fixed percentiles; matplotlib Tukey style with whis=1.5×IQR fences; caps at extreme data inside fences.
+Whisker endpoints (lower cap, upper cap):
+  - Embedded: 0.012000, 0.194000
+  - Ensemble: 0.010000, 0.167000
+  - Filter: 0.011000, 0.183000
+  - Hybrid: 0.011000, 0.203000
+  - Neural: 0.010000, 0.142000
+  - Wrapper: 0.011000, 0.195000
+  - No FS: 0.011500, 0.222000
+
+Reference P5 / P95 (do not define whiskers):
+  - Embedded: P5 = 0.018500, P95 = 0.174000
+  - Ensemble: P5 = 0.016500, P95 = 0.154500
+  - Filter: P5 = 0.017000, P95 = 0.174000
+  - Hybrid: P5 = 0.021500, P95 = 0.191500
+  - Neural: P5 = 0.015000, P95 = 0.166000
+  - Wrapper: P5 = 0.017000, P95 = 0.189000
+  - No FS: P5 = 0.013250, P95 = 0.222000
+
+FS row counts by family (Category FS):
+  - Embedded: n_rows = 11
+  - Ensemble: n_rows = 11
+  - Filter: n_rows = 11
+  - Hybrid: n_rows = 11
+  - Neural: n_rows = 11
+  - Wrapper: n_rows = 11
+
+Distinct FS algorithm names (column Algorithm) per family bucket (among FS rows used for that box):
+  - Embedded: n_unique_algorithms = 6
+  - Ensemble: n_unique_algorithms = 3
+  - Filter: n_unique_algorithms = 6
+  - Hybrid: n_unique_algorithms = 3
+  - Neural: n_unique_algorithms = 2
+  - Wrapper: n_unique_algorithms = 4
+
+No-FS: n dataset-level points = 11 (not an FS family; no Algorithm family bucket count).

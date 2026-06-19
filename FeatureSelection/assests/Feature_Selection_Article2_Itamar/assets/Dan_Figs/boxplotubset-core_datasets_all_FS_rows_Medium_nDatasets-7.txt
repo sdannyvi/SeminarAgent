@@ -1,0 +1,25 @@
+Figure file: boxplotubset-core_datasets_all_FS_rows_Medium_nDatasets-7.jpg
+On-figure title: Medium (7 datasets)
+
+This plot shows the distribution of mean cross-validated AUC. For FS buckets: one value per feature-selection run in each FS bucket column. The No-FS column is the baseline with mean of mean CV AUC if duplicate No-FS rows exist for that dataset. Datasets are restricted to the Core subset (each has FS runs in all three runtime buckets). FS columns: fast / moderate / slow; then No-FS. No stratification by supervision, adoption type, or algorithm family. The horizontal line inside each box is the median; the box spans the interquartile range (IQR); points beyond the whiskers are fliers.
+
+Medians and sample sizes (n = number of mean CV AUC values in that box):
+  - fast: median (mean CV AUC) = 0.578000, n=800
+  - moderate: median (mean CV AUC) = 0.560000, n=375
+  - slow: median (mean CV AUC) = 0.558000, n=55
+  - No FS: median (mean CV AUC) = 0.688000, n=7
+
+Whiskers (percentiles): Matplotlib default boxplot whiskers are **not** fixed percentiles. With whis=1.5 (Tukey's rule), each whisker extends to the most extreme data point that still lies inside [Q1 - 1.5*IQR, Q3 + 1.5*IQR], where Q1/Q3 are the 25th/75th percentiles and IQR = Q3 - Q1. This script uses whis=1.5, matching the figure.
+Whisker endpoints (values at the caps; same rule as the plot):
+  - fast: lower whisker cap = 0.312000, upper = 0.862000
+  - moderate: lower whisker cap = 0.344000, upper = 0.804000
+  - slow: lower whisker cap = 0.386000, upper = 0.779000
+  - No FS: lower whisker cap = 0.620500, upper = 0.804000
+
+Reference percentiles (for context only; they do not define whiskers): 5th and 95th percentiles of each sample:
+  - fast: P5 = 0.427900, P95 = 0.742050
+  - moderate: P5 = 0.440000, P95 = 0.742900
+  - slow: P5 = 0.409800, P95 = 0.729300
+  - No FS: P5 = 0.621550, P95 = 0.799800
+
+FS row counts by bucket (fast / moderate / slow): 800, 375, 55. No-FS dataset-level points: 7.

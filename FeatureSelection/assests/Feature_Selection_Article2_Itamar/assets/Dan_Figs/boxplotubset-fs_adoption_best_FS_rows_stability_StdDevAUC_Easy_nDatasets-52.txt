@@ -1,0 +1,21 @@
+Figure file: boxplotubset-fs_adoption_best_FS_rows_stability_StdDevAUC_Easy_nDatasets-52.jpg
+On-figure title: Easy (52 datasets)
+
+Column Adoption_Type: ``Library`` vs ``Article`` (shown as Research Paper). FS rows only. BEST: per dataset × adoption side, keep the FS row with the highest mean CV AUC (at most one point per dataset per side).
+Plotted column: Std_dev AUC (5-CV) for the same BEST-selected FS rows as the mean-AUC figure. No-FS excluded. Article 2 ``df_work`` scope as above.
+Box lines: median; IQR; whiskers = Tukey whis=1.5.
+
+Medians and sample sizes (n = number of Std_dev AUC (5-CV) values per box):
+  - Library: median (Std_dev AUC (5-CV)) = 0.008000, n=50
+  - Research Paper: median (Std_dev AUC (5-CV)) = 0.006000, n=52
+
+Whiskers: matplotlib Tukey style with whis=1.5×IQR fences; caps at extreme data inside fences.
+Whisker endpoints (lower cap, upper cap):
+  - Library: 0.000000, 0.054000
+  - Research Paper: 0.000000, 0.039000
+
+Reference P5 / P95 (do not define whiskers):
+  - Library: P5 = 0.000000, P95 = 0.046000
+  - Research Paper: P5 = 0.000000, P95 = 0.041700
+
+FS row counts after BEST: Library = 50, Article (Research Paper) = 52.

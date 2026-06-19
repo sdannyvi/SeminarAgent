@@ -1,0 +1,20 @@
+Figure file: boxplotubset-fs_supervision_all_FS_rows_mean_AUC_Medium_nDatasets-11.jpg
+On-figure title: Medium (11 datasets)
+
+FS rows only, stratified by column Supervised: Y = supervised, N = unsupervised. Each point is one FS run (mean CV AUC). No-FS rows excluded. Article 2 ``df_work``: binary datasets, _Peeling excluded, leading classifier per dataset.
+Box lines: median; IQR; whiskers = Tukey whis=1.5.
+
+Medians and sample sizes (n = number of mean CV AUC values per box):
+  - Supervised: median (mean CV AUC) = 0.600000, n=1387
+  - Unsupervised: median (mean CV AUC) = 0.555000, n=400
+
+Whiskers: matplotlib Tukey style with whis=1.5×IQR fences; caps at extreme data inside fences.
+Whisker endpoints (lower cap, upper cap):
+  - Supervised: 0.295000, 0.870000
+  - Unsupervised: 0.312000, 0.822000
+
+Reference P5 / P95 (do not define whiskers):
+  - Supervised: P5 = 0.452000, P95 = 0.832700
+  - Unsupervised: P5 = 0.418500, P95 = 0.758200
+
+FS row counts: Supervised (Y) = 1387, Unsupervised (N) = 400.

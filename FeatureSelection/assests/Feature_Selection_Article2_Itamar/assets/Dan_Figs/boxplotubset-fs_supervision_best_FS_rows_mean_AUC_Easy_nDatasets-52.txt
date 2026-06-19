@@ -1,0 +1,20 @@
+Figure file: boxplotubset-fs_supervision_best_FS_rows_mean_AUC_Easy_nDatasets-52.jpg
+On-figure title: Easy (52 datasets)
+
+BEST: within each supervision side (Y or N), for each dataset keep the FS row with the highest mean CV AUC (at most one point per dataset per side). Plotted column is mean CV AUC. No-FS rows excluded. Article 2 ``df_work`` scope as above.
+Box lines: median; IQR; whiskers = Tukey whis=1.5.
+
+Medians and sample sizes (n = number of mean CV AUC values per box):
+  - Supervised: median (mean CV AUC) = 0.990000, n=52
+  - Unsupervised: median (mean CV AUC) = 0.975500, n=50
+
+Whiskers: matplotlib Tukey style with whis=1.5×IQR fences; caps at extreme data inside fences.
+Whisker endpoints (lower cap, upper cap):
+  - Supervised: 0.947000, 1.000000
+  - Unsupervised: 0.849000, 1.000000
+
+Reference P5 / P95 (do not define whiskers):
+  - Supervised: P5 = 0.910550, P95 = 1.000000
+  - Unsupervised: P5 = 0.829200, P95 = 1.000000
+
+FS row counts after BEST selection: Supervised (Y) = 52, Unsupervised (N) = 50.

@@ -1,0 +1,25 @@
+Figure file: boxplotubset-core_datasets_all_FS_rows_stability_Medium_nDatasets-7.jpg
+On-figure title: Medium (7 datasets)
+
+This plot shows the distribution of standard deviation of AUC across the 5 CV folds (stability metric). For FS buckets: one value per feature-selection run in each FS bucket column. The No-FS column is the baseline with mean of Std_dev AUC if duplicate No-FS rows exist for that dataset. Datasets are restricted to the Core subset (each has FS runs in all three runtime buckets). FS columns: fast / moderate / slow; then No-FS. No stratification by supervision, adoption type, or algorithm family. The horizontal line inside each box is the median; the box spans the interquartile range (IQR); points beyond the whiskers are fliers.
+
+Medians and sample sizes (n = number of Std_dev AUC (5-CV) values in that box):
+  - fast: median (Std_dev AUC (5-CV)) = 0.107000, n=800
+  - moderate: median (Std_dev AUC (5-CV)) = 0.076000, n=375
+  - slow: median (Std_dev AUC (5-CV)) = 0.087000, n=55
+  - No FS: median (Std_dev AUC (5-CV)) = 0.142000, n=7
+
+Whiskers (percentiles): Matplotlib default boxplot whiskers are **not** fixed percentiles. With whis=1.5 (Tukey's rule), each whisker extends to the most extreme data point that still lies inside [Q1 - 1.5*IQR, Q3 + 1.5*IQR], where Q1/Q3 are the 25th/75th percentiles and IQR = Q3 - Q1. This script uses whis=1.5, matching the figure.
+Whisker endpoints (values at the caps; same rule as the plot):
+  - fast: lower whisker cap = 0.000000, upper = 0.296000
+  - moderate: lower whisker cap = 0.000000, upper = 0.255000
+  - slow: lower whisker cap = 0.029000, upper = 0.219000
+  - No FS: lower whisker cap = 0.015000, upper = 0.222000
+
+Reference percentiles (for context only; they do not define whiskers): 5th and 95th percentiles of each sample:
+  - fast: P5 = 0.019000, P95 = 0.221050
+  - moderate: P5 = 0.015000, P95 = 0.220000
+  - slow: P5 = 0.032700, P95 = 0.212200
+  - No FS: P5 = 0.025950, P95 = 0.222000
+
+FS row counts by bucket (fast / moderate / slow): 800, 375, 55. No-FS dataset-level points: 7.

@@ -1,0 +1,212 @@
+\begin{figure}[htbp]
+    \centering
+    \resizebox{0.98\textwidth}{!}{%
+    \begin{tikzpicture}[
+        >=Latex,
+        every node/.style={align=center, font=\footnotesize\sffamily},
+        line/.style={-{Latex[length=2.4mm]}, thick, draw=gray!75!black},
+        dashedline/.style={-{Latex[length=2.4mm]}, thick, dashed, draw=gray!75!black},
+        corpusbox/.style={
+            draw=blue!70!black,
+            fill=blue!8,
+            rounded corners=4pt,
+            very thick,
+            text width=3.9cm,
+            minimum height=1.00cm,
+            inner xsep=5pt,
+            inner ysep=5pt
+        },
+        processbox/.style={
+            draw=gray!70!black,
+            fill=gray!8,
+            rounded corners=4pt,
+            very thick,
+            text width=3.8cm,
+            minimum height=0.95cm,
+            inner xsep=5pt,
+            inner ysep=5pt
+        },
+        featurebox/.style={
+            draw=orange!80!black,
+            fill=orange!10,
+            rounded corners=4pt,
+            very thick,
+            text width=4.0cm,
+            minimum height=0.95cm,
+            inner xsep=5pt,
+            inner ysep=5pt
+        },
+        normalbox/.style={
+            draw=teal!70!black,
+            fill=teal!10,
+            rounded corners=4pt,
+            very thick,
+            text width=3.5cm,
+            minimum height=1.00cm,
+            inner xsep=5pt,
+            inner ysep=5pt
+        },
+        anomalybox/.style={
+            draw=red!70!black,
+            fill=red!8,
+            rounded corners=4pt,
+            very thick,
+            text width=3.7cm,
+            minimum height=1.00cm,
+            inner xsep=5pt,
+            inner ysep=5pt
+        },
+        gatebox/.style={
+            draw=teal!75!black,
+            fill=teal!8,
+            rounded corners=5pt,
+            very thick,
+            text width=5.9cm,
+            minimum height=1.10cm,
+            inner xsep=6pt,
+            inner ysep=6pt
+        },
+        evalbox/.style={
+            draw=green!60!black,
+            fill=green!8,
+            rounded corners=5pt,
+            very thick,
+            text width=5.6cm,
+            minimum height=1.05cm,
+            inner xsep=6pt,
+            inner ysep=6pt
+        },
+        outbox/.style={
+            draw=purple!70!black,
+            fill=purple!8,
+            rounded corners=5pt,
+            very thick,
+            text width=4.0cm,
+            minimum height=0.95cm,
+            inner xsep=5pt,
+            inner ysep=5pt
+        },
+        futurebox/.style={
+            draw=gray!55!black,
+            fill=gray!10,
+            rounded corners=5pt,
+            thick,
+            dashed,
+            text width=5.6cm,
+            minimum height=1.05cm,
+            inner xsep=6pt,
+            inner ysep=6pt
+        }
+    ]
+
+    % Top node
+    \node[corpusbox] (corpus) at (0,0)
+        {{\bfseries Dataset Corpus}\\[1mm]
+        102 tabular datasets};
+
+    % Parallel tracks
+    \node[processbox] (meta) at (-5.2,-1.9)
+        {{\bfseries Meta-Feature}\\
+        Extraction};
+
+    \node[processbox] (fseval) at (5.2,-1.9)
+        {{\bfseries FS Evaluation}\\
+        $\Delta_{\mathrm{AUC}}$ calculation};
+
+    % Track outputs
+    \node[featurebox] (features) at (-5.2,-3.6)
+        {{\bfseries Meta-Feature Vectors}\\
+        $\boldsymbol{\phi}^{\mathrm{P}},\ \boldsymbol{\phi}^{\mathrm{M}},\ \boldsymbol{\phi}^{\mathrm{J}}$};
+
+    \node[featurebox] (labels) at (5.2,-3.6)
+        {{\bfseries Threshold Labels}\\
+        $y_i(\tau)$ from $\Delta_{\mathrm{AUC}}$};
+
+    % Label partition
+    \node[normalbox] (normal) at (3.3,-5.35)
+        {{\bfseries No-FS}\\
+        normals\\
+        {\scriptsize training pool}};
+
+    \node[anomalybox] (anomaly) at (7.7,-5.35)
+        {{\bfseries Needs-FS}\\
+        anomalies\\
+        {\scriptsize evaluation only}};
+
+    % Central gatekeeper pipeline
+    \node[gatebox] (gatekeeper) at (0,-7.1)
+        {{\bfseries One-Class Gatekeeper}\\
+        trained exclusively on No-FS normals};
+
+    \node[gatebox] (detectors) at (0,-8.95)
+        {{\bfseries Anomaly Detectors}\\
+        PCA, Autoencoder, IF, LOF, OC-SVM};
+
+    \node[evalbox] (protocol) at (0,-10.8)
+        {{\bfseries Evaluation Protocol}\\
+        repeated subsampling $(R=50)$, AUROC};
+
+    % Final analyses
+    \node[outbox] (threshold) at (-4.2,-12.7)
+        {{\bfseries Threshold Sweep}\\
+        $\tau \in [0.005, 0.05]$};
+
+    \node[outbox] (ablation) at (4.2,-12.7)
+        {{\bfseries Ablation Study}\\
+        $\boldsymbol{\phi}^{\mathrm{P}}$ vs. $\boldsymbol{\phi}^{\mathrm{M}}$ vs. $\boldsymbol{\phi}^{\mathrm{J}}$};
+
+    % Stage 2: future work (not implemented in this paper)
+    \node[futurebox] (selector) at (0,-14.5)
+        {{\bfseries Stage 2: Downstream Selector}\\
+        {\small (Future Work --- not part of this paper)}};
+
+    % Background container
+    \begin{scope}[on background layer]
+        \node[
+            draw=teal!45,
+            fill=teal!3,
+            rounded corners=7pt,
+            dashed,
+            very thick,
+            inner xsep=9mm,
+            inner ysep=6mm,
+            fit=(gatekeeper)(detectors)(protocol)
+        ] (gatecontainer) {};
+    \end{scope}
+
+    % Arrows: corpus split
+    \draw[line] (corpus.south) -- (0,-0.95) -| (meta.north);
+    \draw[line] (0,-0.95) -| (fseval.north);
+
+    % Arrows: track processing
+    \draw[line] (meta.south) -- (features.north);
+    \draw[line] (fseval.south) -- (labels.north);
+
+    % Arrows: threshold labels partition
+    \draw[line] (labels.south) -- (5.2,-4.55) -| (normal.north);
+    \draw[line] (5.2,-4.55) -| (anomaly.north);
+
+    % Arrows into gatekeeper
+    \draw[line] (features.south) -- (-5.2,-6.4) -- (gatekeeper.west);
+    \draw[line] ([xshift=-1.15cm]normal.south) -- (gatekeeper.center);
+
+    % Anomalies are held out for evaluation only
+    \draw[dashedline] (anomaly.south) -- (7.7,-10.8) -- (protocol.east);
+
+    % Main central flow
+    \draw[line] (gatekeeper.south) -- (detectors.north);
+    \draw[line] (detectors.south) -- (protocol.north);
+
+    % Outputs
+    \draw[line] (protocol.south) -- (0,-11.75) -| (threshold.north);
+    \draw[line] (0,-11.75) -| (ablation.north);
+
+    % Stage 2 future-work pointer (dashed)
+    \draw[dashedline] (gatekeeper.south) -- (0,-13.6) -- (selector.north);
+
+    \end{tikzpicture}%
+    }
+
+    \caption{Schematic overview of the Green AutoML Gatekeeper pipeline. The dataset corpus of 102 tabular datasets is processed through two coordinated tracks: meta-feature extraction, yielding intrinsic Problexity descriptors, metadata descriptors, and their joint representation; and FS evaluation, yielding threshold-dependent No-FS and Needs-FS labels based on $\Delta_{\mathrm{AUC}}$. The one-class gatekeeper is trained only on No-FS normal datasets, while Needs-FS datasets are held out for evaluation. Five anomaly detectors are evaluated under a repeated-subsampling protocol, followed by a threshold sweep and a representational ablation study. The dashed gray node (Stage~2: Downstream Selector) is not implemented in this paper; it represents the subject of subsequent research.}
+    \label{fig:pipeline_diagram}
+\end{figure}

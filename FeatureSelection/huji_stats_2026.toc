@@ -1,0 +1,5 @@
+\beamer@sectionintoc {1}{Recap and Motivation}{2}{0}{1}
+\beamer@sectionintoc {2}{Q1: Predicting Feature-Selection Utility}{15}{0}{2}
+\beamer@sectionintoc {3}{Q2: Resource-Aware Evaluation}{35}{0}{3}
+\beamer@sectionintoc {4}{Conclusion}{54}{0}{4}
+\beamer@sectionintoc {5}{Backup}{62}{1}{5}
