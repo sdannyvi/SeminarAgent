@@ -97,11 +97,18 @@
 %% ── Metadata ─────────────────────────────────────────────────────────────────
 \title[FS: hardness, utility, resources]{Feature Selection: Benchmark Hardness, Predictive Utility, and Resource Costs}
 \subtitle{From dataset taxonomy to preprocessing decisions}
-\author{Dan Vilenchik}
-\institute{Ben-Gurion University of the Negev\\[2pt]
-           {\small Part of Itamar Elmakias's PhD thesis}}
-\date{Statistics Department, Hebrew University, June 2026}
 
+\author{Dan Vilenchik}
+
+\institute{
+Department of Electrical and Computer Engineering\\
+Ben-Gurion University of the Negev\\[4pt]
+{\small Joint work with Itamar Elmakias (PhD thesis)}
+}
+
+\date{\textcolor{blue}{
+Department of Statistics Seminar, Hebrew University, 
+June 2026}}
 %% ═══════════════════════════════════════════════════════════════════════════════
 \begin{document}
 %% ═══════════════════════════════════════════════════════════════════════════════
@@ -115,8 +122,6 @@
   \vspace{-0.4cm}
   \begin{center}
     \small\color{bgucolor!80}
-    \textit{Last year: ``Choosing the right dataset.''
-            This year: two follow-up questions about utility and resource allocation.}
   \end{center}
 \end{frame}
 }
@@ -133,10 +138,10 @@
 \vspace{0.2cm}
 Feature selection (FS) is a standard pipeline step, with dozens of algorithms.
 We benchmark them on commonly used datasets --- but
-\alert{are those datasets hard?}
+\alert{are those datasets meaningful?}
 
 \medskip
-We built a hardness framework: run 27 FS algorithms on 102 datasets
+We built a hardness framework: run 37 FS algorithms on 102 datasets
 (63 binary, 39 multi-class) and label each dataset by the best AUC achievable.
 \begin{itemize}
   \item \textcolor{easygreen}{\textbf{Easy}}: best AUC $\geq 90\%$
@@ -214,7 +219,7 @@ which motivates expecting hard FS-like regimes.}
 \end{tikzpicture}
 
 \vspace{4pt}
-{\small\textit{Below $\lambda_c$, even PCA's leading eigenvector is uninformative.}}
+{\small\textit{Below $\lambda_c$, the leading eigenvector is uninformative.}}
 \end{columns}
 \end{frame}
 
@@ -274,12 +279,12 @@ commonly used for FS benchmarking.}
 \column{0.52\textwidth}
 \vspace{0.2cm}
 Since no naturally occurring Hard binary dataset was identified under the protocol,
-the published paper introduces \textbf{peeling}: shrink a dataset's training set
-while keeping a known ground-truth feature set $F$ that still works.
+the published paper introduces \textbf{peeling}:  \textcolor{easygreen} {shrink a dataset's training set
+while keeping a known ground-truth feature set $F$ that still works.}
 
 \medskip
 \begin{itemize}
-  \item Hard under our protocol: the 27 FS algorithms fail to recover $F$
+  \item Hard under our protocol: the 37 FS algorithms fail to recover $F$
   \item The retained set $F$ still achieves good AUC, so the variant is not
         merely degraded noise
   \item Certified by construction, not a formal hardness theorem
@@ -320,7 +325,7 @@ Procedure on the next slide.}}
 \begin{center}
 \begin{tikzpicture}[node distance=0.4cm and 0.7cm,every node/.style={font=\small}]
   \node[box,text width=2.6cm] (split) {\textbf{1. Split}\\30\% train / 70\% test};
-  \node[peel,right=0.7cm of split] (gt) {\textbf{2. Find GT}\\run 27 FS algs;\\save set $F$ (Fair/High)};
+  \node[peel,right=0.7cm of split] (gt) {\textbf{2. Find GT}\\run 37 FS algs;\\save set $F$ (AUC $>$ 90\%)};
   \node[peel,right=0.7cm of gt] (peel) {\textbf{3. Peel}\\remove 10\%/class\\until AUC $\to$ Low};
   \node[box,text width=2.6cm,right=0.7cm of peel] (val) {\textbf{4. Validate}\\FS still fails?\\GT still works?};
   \draw[arrow] (split) -- (gt);
@@ -345,15 +350,25 @@ Procedure on the next slide.}}
 still recovers good AUC.
 \end{columns}
 
+\pause
+
 \medskip
-{\footnotesize Applied to all 63 binary datasets, only Slashdot and SMK-CAN-187
-survived; both retain $>80\%$ of samples.}
+
+\begin{block}{Open Research Question}
+
+Can we define a generative model that mirrors this process, with interpretable
+
+parameters that explain the success and failure modes of the peeling?
+
+\end{block}
+
+
 \end{frame}
 
 %% ── Recap 6: the two questions ───────────────────────────────────────────────
 \begin{frame}{From benchmark hardness to two follow-up questions}
 \begin{center}
-\small Last year we asked whether our benchmarks are hard. We now consider two
+So far, we've asked what kind of benchmarks are used in the FS community. We now consider two
 follow-up questions.
 \end{center}
 
@@ -364,7 +379,6 @@ follow-up questions.
 \centering
 Can we predict whether FS will improve predictive performance?
 \end{block}
-\centering{\small Chapter~1 --- utility prediction}
 
 \pause
 \column{0.48\textwidth}
@@ -372,7 +386,6 @@ Can we predict whether FS will improve predictive performance?
 \centering
 Conditional on using FS, which resource dimensions improve performance?
 \end{block}
-\centering{\small Chapter~2 --- resource-aware evaluation}
 \end{columns}
 
 \pause
@@ -409,61 +422,60 @@ Conditional on using FS, which resource dimensions improve performance?
   \item \textbf{Surveys / benchmarks} show no universally best FS method;
         outcomes depend on the dataset and the learner
         (Bommert et al.\ 2020; Li et al.\ 2017).
-  \item \textbf{Meta-learning} predicts FS choices, or FS benefit, from dataset
+  \item \textbf{Meta-learning} predicts FS choices from dataset
         descriptors (Filchenkov \& Pendryak 2015; Parmezan et al.\ 2017).
-  \item \textbf{Post et al.\ (2016)} is the closest prior work: it predicts
-        whether CFS improves AUC for a \emph{dataset~$\times$~classifier} pair,
-        across ${\sim}394$ OpenML binary datasets and 12 classifiers, using a
-        Random-Forest meta-model with FS landmarkers.
+  \item \textbf{Post et al.\ (2016)} predicts
+        whether  Correlation-based Feature Subset Selection (CfsSubsetEval) improves AUC for a \emph{dataset~$\times$~classifier} pair,
+        across 394 OpenML binary datasets and 12 classifiers, using a
+        Random-Forest meta-model.
 \end{itemize}
 
-\pause
-\vspace{0.2cm}
-\begin{center}
-\small\color{bgucolor!80}\textit{Our question is upstream and dataset-level:
-before running an FS search, can we identify datasets where \emph{any}
-meaningful FS gain is likely?}
-\end{center}
+
 \end{frame}
 
 %% ── C1.1b: closest work and how we differ ─────────────────────────────────────
 \begin{frame}{Relation to Post et al.\ (2016)}
-\vspace{0.1cm}
-{\small Post et al.\ (2016) directly ask whether feature selection improves
-performance for a given dataset and classifier --- the closest precedent to our
-question. We build on it and shift the deployment question.}
 
-\medskip
-\pause
+
 \centering
 \footnotesize
-\renewcommand{\arraystretch}{1.25}
-\begin{tabular}{@{}R{2.2cm} R{4.55cm} R{4.55cm}@{}}
+\renewcommand{\arraystretch}{1.35}
+\setlength{\tabcolsep}{8pt}
+\begin{tabular}{@{}p{2.3cm}p{4.8cm}p{4.8cm}@{}}
 \toprule
  & \textbf{Post et al.\ (2016)} & \textbf{This work} \\
 \midrule
-Question      & Does FS improve a specified classifier on this dataset?
-              & Is an FS search worthwhile for this dataset? \\
-Decision unit & dataset $\times$ classifier
-              & dataset-level screening decision \\
-FS intervention & mainly CFS subset selection
-              & oracle over 37 FS algorithms / multiple subset sizes \\
-Utility label & any / statistically significant improvement
-              & meaningful gain, $\Delta\mathrm{AUC}\geq 0.05$ \\
-Learning      & supervised meta-learning over many labeled pairs
-              & rare-event detection + weak-positive supervised transfer \\
-Positives     & 41\% of pairs improve, 10\% significantly
-              & 7 / 102 datasets with substantial oracle gain \\
+Question
+& Does FS improve a specified classifier on this dataset?
+& Is FS worthwhile for this dataset? \\
+
+Decision unit
+& Dataset $\times$ classifier
+& Dataset-level screening decision \\
+
+FS intervention
+& One CFS subset-selection method
+& 37 FS algorithms across multiple subset sizes \\
+
+Utility label
+& Any / statistically significant improvement
+& Meaningful gain ($\Delta$AUC $\geq 0.05$) \\
+
+Learning paradigm
+& Supervised meta-learning over labeled dataset--classifier pairs
+& Rare-event detection + weak-positive supervised transfer \\
+
+Positive class
+& 41\% of pairs improve; 10\% significantly
+& 7/102 datasets exhibit substantial oracle gain \\
+
+Best AUROC
+& 0.77--0.78
+& above 0.90  \\
+
 \bottomrule
 \end{tabular}
 
-\medskip
-\pause
-\begin{center}
-\small\color{bgucolor!80}\textit{We build directly on POST --- FS utility is
-predictable. We ask a different deployment question: when is it worth initiating
-an FS search at all?}
-\end{center}
 \end{frame}
 
 %% ── C1.2 ─────────────────────────────────────────────────────────────────────
@@ -472,7 +484,6 @@ an FS search at all?}
 \column{0.54\textwidth}
 \vspace{0.2cm}
 \textbf{Setup:} 37 FS algorithms $\times$ 102 datasets $\times$ 5 classifiers.\\
-{\footnotesize (This study expands Paper~1's 27 algorithms to 37.)}
 
 \medskip
 For each dataset $\mathcal{D}_i$,
@@ -488,7 +499,7 @@ classifiers, and feature counts $K$.
 \pause
 \column{0.43\textwidth}
 \vspace{0.2cm}
-The oracle is deliberately generous --- it selects, in hindsight, the best
+The oracle is deliberately conservative (w.r.t FP rate) as it selects, in hindsight, the best
 \begin{itemize}
   \item algorithm,
   \item number of features $K$,
@@ -509,8 +520,7 @@ be common under ordinary model-selection constraints.}
 \centering
 \includegraphics[width=\linewidth]{Paper3_Itamar/assets/delta_auc_histogram.png}
 
-{\footnotesize One of the 102 datasets is omitted from this histogram
-(legend totals 101).}
+
 
 \pause
 \column{0.42\textwidth}
@@ -522,14 +532,51 @@ even under the generous oracle.
 \begin{itemize}
   \item Most datasets cluster near $\Delta = 0$
   \item Some show lower AUC after FS
-  \item The beneficial datasets lie in the upper tail of the empirical distribution
+  \item Those datasets account for under 1\% of the total FS search
+cost
 \end{itemize}
 
-\medskip
-{\small\color{gray} Those datasets account for under 1\% of the total FS search
-cost; most FS evaluations are spent on datasets with little observed predictive
-gain.}
+
 \end{columns}
+\end{frame}
+
+\begin{frame}{Dataset Representation: Intrinsic Complexity Descriptors}
+
+\small
+\begin{table}
+\centering
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{p{3.5cm}p{6.8cm}}
+\toprule
+\textbf{Feature group} & \textbf{Examples} \\
+\midrule
+Basic meta-features &
+\#Samples, \#Features, Feature/Sample ratio, Class imbalance \\
+
+Baseline performance &
+Probe\_AUC$_0$ (classifier without feature selection) \\
+
+\textbf{Problexity descriptors} &
+\textbf{F1}: Fisher's discriminant ratio (single-feature separability)\\
+&
+\textbf{F1v}: Directional Fisher criterion (multivariate linear separability)\\
+&
+\textbf{N2}: Ratio of intra-/inter-class nearest-neighbor distances\\
+&
+\textbf{N3}: 1-NN leave-one-out error (local neighborhood complexity)\\
+&
+Class overlap and decision-boundary geometry \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\pause
+
+\medskip
+\alert{Unlike prior work, our representation relies on intrinsic dataset geometry rather than
+classifier or feature-selection landmarkers.}
+
 \end{frame}
 
 %% ── C1.4 ─────────────────────────────────────────────────────────────────────
@@ -551,12 +598,8 @@ Effect sizes (Cohen's $d$), Needs-FS vs.\ the rest:
 
 \medskip
 {\small These descriptors are consistent with the difficulty descriptors used in
-the hardness taxonomy --- not raw $p$, but problem geometry.}
+the hardness taxonomy.}
 
-\pause
-\medskip
-{\small The separation is large enough that beneficial datasets form a distinct,
-rare population --- motivating a \textbf{rare-event (anomaly) detection} approach.}
 \end{columns}
 \end{frame}
 
@@ -573,7 +616,7 @@ rare population --- motivating a \textbf{rare-event (anomaly) detection} approac
 \end{itemize}
 
 \medskip
-Models: PCA reconstruction, autoencoder, One-Class SVM, LOF, Isolation Forest.
+Models: PCA reconstruction, autoencoder, One-Class SVM, LOF (Local Outlier Factor), Isolation Forest.
 
 \medskip
 {\small\color{gray} No positive examples are used in training; the detector models
@@ -587,43 +630,33 @@ the majority population and flags deviations.}
 \end{frame}
 
 %% ── C1.7 ─────────────────────────────────────────────────────────────────────
-\begin{frame}{Unsupervised detection identifies most beneficial datasets}
-\begin{columns}[T]
-\column{0.46\textwidth}
-\vspace{0.3cm}
+
+\begin{frame}{One-class detection of feature-selection-beneficial datasets}
+
 \centering
-\small
+\footnotesize
+\renewcommand{\arraystretch}{1.2}
+
 \begin{tabular}{lcc}
 \toprule
-Model & AUROC & Recall \\
+\textbf{Model} & \textbf{AUROC} & \textbf{Recall} \\
 \midrule
-Autoencoder & 0.90 & 0.71 \\
-PCA reconstruction & 0.89 & 0.86 \\
-OC-SVM & 0.89 & 0.86 \\
-LOF & 0.87 & 0.71 \\
-Isolation Forest & 0.80 & 0.29 \\
+Autoencoder        & 0.90 & 0.71 \\
+PCA Reconstruction & 0.89 & 0.86 \\
+OC-SVM             & 0.89 & 0.86 \\
+LOF                & 0.87 & 0.71 \\
+Isolation Forest   & 0.80 & 0.29 \\
 \midrule
-Random baseline & 0.50 & --- \\
+Random baseline    & 0.50 & -- \\
 \bottomrule
 \end{tabular}
 
-\pause
-\column{0.5\textwidth}
-\vspace{0.2cm}
-With no positive training examples, simple detectors reach AUROC $0.87$--$0.90$
-in this evaluation.
 
-\medskip
-Datasets assigned low anomaly scores may be candidates for bypassing exhaustive
-FS evaluation.
 
-\medskip
-Recall is the primary concern, to avoid missing datasets that would benefit from
-FS.
-\end{columns}
+
 \end{frame}
 
-%% ── C1.8 ─────────────────────────────────────────────────────────────────────
+
 \begin{frame}{Weak positive examples improve supervised utility prediction}
 \begin{columns}[T]
 \column{0.52\textwidth}
@@ -631,7 +664,7 @@ FS.
 \includegraphics[width=\linewidth]{Paper3_Itamar/assets/twoclass_auroc_vs_tau.jpeg}
 
 \column{0.45\textwidth}
-\vspace{0.2cm}
+\vspace{1.2cm}
 Use weakly beneficial datasets as positives:
 \begin{itemize}
   \item Train positives: $0.01 \leq \Delta\mathrm{AUC} < 0.05$
@@ -643,9 +676,7 @@ Use weakly beneficial datasets as positives:
 In this evaluation, logistic regression achieves AUROC $1.00$; RF and XGBoost
 reach $0.96$; no positive test cases are missed.
 
-\medskip
-{\small Weakly and strongly beneficial datasets share a structural signature that
-is approximately linearly separable in this representation.}
+
 \end{columns}
 \end{frame}
 
@@ -668,10 +699,7 @@ Combined & 1.00 \\
 \end{tabular}
 \end{center}
 
-\medskip
-{\small Domain labels alone are not predictive in this benchmark; intrinsic
-dataset descriptors carry the signal. Genomic data is 71\% of Needs-FS and 75\%
-of No-FS, so domain does not determine utility.}
+
 
 \pause
 \column{0.50\textwidth}
@@ -706,6 +734,9 @@ $\approx 139$).}
 
 %% ── C2.0: prior work / positioning ────────────────────────────────────────────
 \begin{frame}{Prior work gives per-dataset winners, not transparent rules}
+
+\vspace{0.41cm}
+
 \begin{itemize}
   \item \textbf{Surveys / benchmarks} compare algorithms across datasets and
         report \emph{dataset-specific winners} --- no single method dominates
@@ -719,20 +750,13 @@ $\approx 139$).}
 
 \pause
 \vspace{0.15cm}
-\begin{block}{The gap}
-Per-dataset, single-point predictions can be accurate but are \emph{fragmented}:
-this does not directly yield stable resource-level guidance, and it does not say
-whether spending \emph{more} resources (runtime, supervision, custom code) is
-justified in the first place.
+\begin{block}{Practical challenge}
+Practitioners need simple rules of thumb:
+\emph{When is a lightweight FS method sufficient, and when is additional
+investment in runtime, supervision, or custom implementations actually worthwhile?}
 \end{block}
 
-\pause
-\vspace{0.1cm}
-\begin{center}
-\small\color{bgucolor!80}\textit{Our reframing: group methods into coarse resource
-categories and test, with paired within-dataset statistics, whether higher cost
-systematically pays --- rules of thumb rather than per-dataset point estimates.}
-\end{center}
+
 \end{frame}
 
 %% ── C2.1 ─────────────────────────────────────────────────────────────────────
@@ -791,7 +815,7 @@ Wilcoxon signed-rank tests, win rates, Cliff's $\delta$.
 \vspace{0.4cm}
 We also split results by hardness (Paper~1 taxonomy). Using the 37-algorithm suite,
 the binary split is \textbf{48 Easy / 15 Medium}
-(vs.\ 52 / 11 with 27 algorithms; the larger suite reclassifies a few datasets).
+
 
 \vspace{0.25cm}
 \begin{center}
@@ -802,7 +826,7 @@ conclusions differ across these two regimes.}
 \vspace{0.2cm}
 \begin{center}
 \small\color{black!70}
-Medium results should be interpreted cautiously: only 15 paired datasets, so a
+Medium `Best'-setting results should be interpreted cautiously: only 15 paired datasets, so a
 non-significant Medium comparison means ``no evidence of a difference,'' not
 ``no difference.''
 \end{center}
@@ -812,24 +836,10 @@ non-significant Medium comparison means ``no evidence of a difference,'' not
 \begin{frame}{Untuned FS configurations underperform the no-FS baseline}
 \begin{center}
 \includegraphics[width=0.64\linewidth]%
-  {Feature_Selection_Article2_Itamar/assets/figures/latex_final_boxplots/runtime_bucket__Fig_1__Core__All__Performance_large.png}
+{Feature_Selection_Article2_Itamar/assets/figures/latex_final_boxplots/runtime_bucket__Fig_1__Core__All__Performance_large.png}
 \end{center}
 
-\vspace{-2pt}
-\pause
-\begin{columns}[T]
-\column{0.52\textwidth}
-\small
-\textbf{All setting:} fast, moderate, and slow methods all land below the no-FS
-baseline.\\
-Easy: 88--89\% vs.\ no-FS \textbf{98.9\%}.\\
-Medium: $\sim$56\% vs.\ no-FS \textbf{69.0\%}.
 
-\column{0.45\textwidth}
-\small
-Untuned FS lowers AUC by 7--12 points relative to no-FS. The dominant difference
-is between unselected configurations and the best configuration within a category.
-\end{columns}
 \end{frame}
 
 %% ── C2.4 ─────────────────────────────────────────────────────────────────────
@@ -899,40 +909,39 @@ and broader testing.
 
 \column{0.47\textwidth}
 \small
-Clear positive effect on Easy ($n=48$, $p\approx 3\times10^{-8}$). On Medium it
-is small and only marginally significant ($n=15$, $p\approx 0.028$) --- consistent
-with both a weaker effect and limited power, so we do not over-interpret it.
+Clear positive effect on Easy ($n=48$, $p\approx 3\times10^{-8}$). On Medium, it
+is small but still significant ($n=15$, $p\approx 0.028$).
 \end{columns}
 \end{frame}
 
-%% ── C2.7: evaluation workflow ────────────────────────────────────────────────
-\begin{frame}{Proposed evaluation workflow}
-\begin{center}
-\begin{tikzpicture}[node distance=0.5cm and 1.0cm,every node/.style={font=\small}]
-  \node[box,text width=2.9cm] (start) {New dataset};
-  \node[box,text width=3.1cm,right=1.0cm of start,fill=easygreen!12,draw=easygreen]
-    (screen) {Compute dataset\\descriptors};
-  \node[wbox,text width=3.2cm,above right=0.3cm and 1.0cm of screen,draw=gray]
-    (skip) {\small Low predicted utility:\\consider no-FS baseline};
-  \node[box,text width=3.4cm,below right=0.3cm and 1.0cm of screen,
-        fill=medorange!12,draw=medorange]
-    (do) {\small High predicted utility:\\low-cost maintained supervised
-          methods; systematic $K$ tuning};
-  \draw[arrow] (start) -- (screen);
-  \draw[arrow,gray] (screen.east) -- (skip.west);
-  \draw[arrow,medorange] (screen.east) -- (do.west);
-\end{tikzpicture}
-\end{center}
+% %% ── C2.7: evaluation workflow ────────────────────────────────────────────────
+% \begin{frame}{Proposed evaluation workflow}
+% \begin{center}
+% \begin{tikzpicture}[node distance=0.5cm and 1.0cm,every node/.style={font=\small}]
+%   \node[box,text width=2.9cm] (start) {New dataset};
+%   \node[box,text width=3.1cm,right=1.0cm of start,fill=easygreen!12,draw=easygreen]
+%     (screen) {Compute dataset\\descriptors};
+%   \node[wbox,text width=3.2cm,above right=0.3cm and 1.0cm of screen,draw=gray]
+%     (skip) {\small Low predicted utility:\\consider no-FS baseline};
+%   \node[box,text width=3.4cm,below right=0.3cm and 1.0cm of screen,
+%         fill=medorange!12,draw=medorange]
+%     (do) {\small High predicted utility:\\low-cost maintained supervised
+%           methods; systematic $K$ tuning};
+%   \draw[arrow] (start) -- (screen);
+%   \draw[arrow,gray] (screen.east) -- (skip.west);
+%   \draw[arrow,medorange] (screen.east) -- (do.west);
+% \end{tikzpicture}
+% \end{center}
 
-\pause
-\vspace{0.3cm}
-\begin{center}
-\small
-Use dataset-level screening before exhaustive FS evaluation; begin with low-cost
-methods and systematic tuning; consider higher-cost methods only if the low-cost
-search is insufficient.
-\end{center}
-\end{frame}
+% \pause
+% \vspace{0.3cm}
+% \begin{center}
+% \small
+% Use dataset-level screening before exhaustive FS evaluation; begin with low-cost
+% methods and systematic tuning; consider higher-cost methods only if the low-cost
+% search is insufficient.
+% \end{center}
+% \end{frame}
 
 
 %% ══════════════════════════════════════════════════════════════════════════════
@@ -968,37 +977,30 @@ whether FS is useful and how resource-intensive the evaluation should be.}
 \end{frame}
 
 %% ── Open questions ───────────────────────────────────────────────────────────
-\begin{frame}{Open questions}
-\begin{columns}[T]
-\column{0.5\textwidth}
-\vspace{0.2cm}
-\textbf{Theoretical}
+\begin{frame}{Open research questions}
+
 \begin{itemize}
-  \item Is there a provable phase transition for feature recovery as $n/p$ varies?
-        The peeling collapse and the published Easy/Medium/Hard taxonomy are
-        consistent with one.
-  \item Can RMT / sparse-recovery tools characterize the FS-hard regime?
-\end{itemize}
+
+\item Can we define a \textbf{generative model of datasets} that predicts
+when iterative dataset peeling succeeds or fails in generating 'Hard' datasets?
 
 \pause
-\column{0.48\textwidth}
-\vspace{0.2cm}
-\textbf{Empirical}
-\begin{itemize}
-  \item More Hard datasets --- a systematic search?
-  \item Does utility prediction transfer to new domains (time series, graphs,
-        regression)?
-  \item Can the utility predictor inform AutoML pipelines?
-\end{itemize}
-\end{columns}
 
-\pause
-\vspace{0.4cm}
-\begin{center}
-\small\color{black!75}
-These results support treating FS as a conditional preprocessing step whose
-predictive value depends on measurable dataset properties.
-\end{center}
+\item What intrinsic properties explain the emergence of
+'Hard' datasets, beyond simple dimensionality measures such as
+the sample-to-feature ratio ($n/p$)?
+    \pause
+
+
+    \item Does feature-selection utility prediction generalize beyond tabular
+    classification (e.g., time series, graphs)?
+
+    \pause
+
+    \item Explore how dataset complexity serves as a foundation for
+    \textbf{resource-aware learning}, beyond feature selection?
+\end{itemize}
+
 \end{frame}
 
 %% ── Thank you ────────────────────────────────────────────────────────────────
@@ -1014,163 +1016,15 @@ predictive value depends on measurable dataset properties.
 Published paper: \kbsfull\\[2pt]
 \kbsdoi\ \,|\,\ \kbssd\\[10pt]
 Code \& datasets: \repo\\[10pt]
-\color{gray}Chapters~1--2 (utility prediction, resource-aware evaluation): in preparation.
+\color{gray}Chapters~1--2 (utility prediction, resource-aware evaluation): under review.
 \end{center}
 \end{frame}
 }
 
 
-%% ══════════════════════════════════════════════════════════════════════════════
-%%  BACKUP
-%% ══════════════════════════════════════════════════════════════════════════════
-\appendix
-\section{Backup}
-
-%% ── Backup: collapse / phase transition ──────────────────────────────────────
-\begin{frame}{Backup: the recovery collapse vs.\ the PCA transition}
-\begin{columns}[T]
-\column{0.5\textwidth}
-\small
-\textbf{BBP / spiked PCA:} below $\lambda_c=\sqrt{p/n}$, signal recovery is
-information-theoretically impossible.
-
-\medskip
-\textbf{Peeling collapse:} below a critical $n$, FS algorithms fail to recover $F$,
-yet the signal still exists ($F$ works on the test set).
-
-\medskip
-\textbf{Difference:}
-\begin{itemize}
-  \item BBP: information-theoretic impossibility
-  \item Peeling: algorithmic failure (signal present)
-\end{itemize}
-
-\column{0.48\textwidth}
-\centering
-\begin{tikzpicture}[scale=0.85]
-  \draw[->,thin,gray] (0,0) -- (4.5,0) node[right,font=\scriptsize] {$n/p$};
-  \draw[->,thin,gray] (0,0) -- (0,3.2) node[above,font=\scriptsize] {Prob.\ recovery};
-  \draw[emphcolor,very thick] (0,0) -- (1.5,0);
-  \draw[emphcolor,very thick]
-        (1.5,0) .. controls (1.8,0.8) and (2.2,2.0) .. (4.2,2.6);
-  \draw[dashed,bgucolor!50,thin] (1.5,0) -- (1.5,2.8)
-        node[above,font=\scriptsize,bgucolor] {$n^*/p$};
-  \node[emphcolor,font=\scriptsize] at (0.75,0.35) {FS fails};
-  \node[emphcolor,font=\scriptsize] at (3.2,1.3) {FS succeeds};
-  \node[font=\scriptsize\itshape,gray] at (2.2,-0.5) {conjectured};
-\end{tikzpicture}
-\end{columns}
-\end{frame}
-
-%% ── Backup: algorithms ───────────────────────────────────────────────────────
-\begin{frame}{Backup: the 27 / 37 FS algorithms}
-\begin{columns}[T]
-\column{0.5\textwidth}
-\vspace{0.2cm}
-\textbf{Paper~1 (27 algorithms):}
-\begin{itemize}\small
-  \item Filter: Low Var, Skewness, Univariate, mRMR, ReliefF, LS, LeadingEV, CT, DT
-  \item Wrapper: SVM-B/F, DecisionT-B/F, Alpha Inv
-  \item Embedded: RFS, SVM-RBF, GRAPH, MCFS, CAE, DLFS, UFS
-  \item Ensemble: ETree, AdaBoost
-  \item Hybrid: CEI-GA, GRACES, SHAP, SVC
-\end{itemize}
-
-\column{0.47\textwidth}
-\vspace{0.2cm}
-\textbf{Chapters~1--2 (37 algorithms):}
-same 27 plus SA-FS, RFE, Filter-Wrapper, Boruta, Stability-LASSO, STG, LSPIN,
-HSIC-Lasso, PSO-FS, Fisher Score.
-
-\medskip
-\textbf{Evaluation:} 5-fold stratified CV; $K\in\{1,5,30,60\}$;
-classifiers LR, SVM, RF, ET, XGBoost.
-\end{columns}
-\end{frame}
-
-%% ── Backup: 7 beneficial datasets ────────────────────────────────────────────
-\begin{frame}{Backup: the 7 FS-beneficial datasets}
-\begin{center}
-\small
-\begin{tabular}{lccccc}
-\toprule
-Dataset & Domain & $p$ & $n$ & No-FS AUC & $\Delta$AUC \\
-\midrule
-colon & Gene & 2000 & 62 & 51\% & +25.3\% \\
-Period Changer & Biological & 1177 & 90 & 52\% & +19.3\% \\
-CNS & Gene & 7129 & 60 & 58\% & +16.3\% \\
-tumors\_C & Gene & 7129 & 60 & 58\% & +16.3\% \\
-ALLAML & Gene & 7129 & 72 & 89\% & +8.2\% \\
-madelon & Other & 500 & 2600 & 67\% & +6.0\% \\
-Musk2 & Chemical & 166 & 6598 & 87\% & +5.1\% \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-\medskip
-\small
-Common pattern: very small $n$ with large $p$ (gene expression), or a designed
-synthetic challenge (madelon).
-\end{frame}
-
-%% ── Backup: stats ────────────────────────────────────────────────────────────
-\begin{frame}{Backup: Wilcoxon tests and Cliff's $\delta$}
-\begin{center}
-\small
-\begin{tabular}{lccc}
-\toprule
-Comparison & Setting & Cliff's $\delta$ (Easy) & Cliff's $\delta$ (Medium) \\
-\midrule
-Fast vs Slow & All & 0.72 (fast) & 0.60 (fast) \\
-Library vs Research & All & 0.36 (library) & 0.64 (library) \\
-Supervised vs Unsup. & All & 0.32 (sup.) & 0.19 (sup.) \\
-Filter vs Hybrid & Best & 0.44 (filter) & --- \\
-\midrule
-All vs Best & --- & \multicolumn{2}{c}{$\approx$ 7--12 AUC points difference} \\
-\bottomrule
-\end{tabular}
-\end{center}
-\medskip
-\small
-Paired within-dataset one-sided Wilcoxon signed-rank tests.
-$|\delta|>0.5$ is a large effect (Romano 2006).
-\end{frame}
-
-%% ── Backup: hardness rules ───────────────────────────────────────────────────
-\begin{frame}{Backup: hardness categorization rules (Paper~1)}
-\begin{center}
-\begin{tabular}{ccc}
-\toprule
-\textbf{Category} & \textbf{AUC without FS} & \textbf{Best AUC with FS} \\
-\midrule
-\textcolor{easygreen}{\textbf{Easy}} & Any & $\geq 90\%$ \\
-\textcolor{medorange}{\textbf{Medium}} & Low or Fair & $70$--$90\%$ \\
-\textcolor{hardred}{\textbf{Hard}} & Low & $< 70\%$ \\
-Fragile & High or Fair & Drops by $\geq 1$ category \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-\medskip
-\begin{columns}[T]
-\column{0.5\textwidth}
-\small
-\textbf{Performance tiers:}
-\begin{itemize}
-  \item High: AUC $\geq 90\%$
-  \item Fair: $70$--$90\%$
-  \item Low: AUC $< 70\%$
-\end{itemize}
-
-\column{0.47\textwidth}
-\small
-Category is dynamic: new algorithms can only raise it.
-Fragile and Hard mark open challenges.
-\end{columns}
-\end{frame}
 
 %% ── Backup: references ────────────────────────────────────────────────────────
-\begin{frame}{Backup: references}
+\begin{frame}{References}
 \footnotesize
 \begin{itemize}\setlength{\itemsep}{3pt}
   \item M.\ J.\ Post, P.\ van der Putten, J.\ N.\ van Rijn.
